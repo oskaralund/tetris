@@ -12,6 +12,16 @@ Game::Game() {
   current_piece = GetRandomPiece();
   next_piece = GetRandomPiece();
   board.Clear();
+
+  JLTSZ_kicks_ = {{{0, -1}, {-1, -1}, { 2, 0}, { 2, -1}},
+                  {{0,  1}, { 1,  1}, {-2, 0}, {-2,  1}},
+                  {{0,  1}, {-1,  1}, { 2, 0}, { 2,  1}},
+                  {{0, -1}, { 1, -1}, {-2, 0}, {-2, -1}}};
+
+  I_kicks_ = {{{0, -2}, { 0,  1}, { 1, -2}, {-2,  1}},
+              {{0, -1}, { 0,  2}, {-2, -1}, { 1,  2}},
+              {{0,  2}, { 0, -1}, {-1,  2}, { 2, -1}},
+              {{0,  1}, { 0, -2}, { 2,  1}, {-1, -2}}};
 }
 
 
@@ -96,14 +106,36 @@ void Game::Down() {
 
 
 void Game::RotateCW() {
-  auto prev_points = current_piece->points;
-  auto prev_rotation = current_piece->rotation;
+  auto points = current_piece->points;
+  auto rotation = current_piece->rotation;
+  auto type = current_piece->type;
 
+
+  // Try basic rotation
   current_piece->RotateCW();
 
   if (!ValidPosition(current_piece->points)) {
-    current_piece->points = prev_points;
-    current_piece->rotation = prev_rotation;
+    current_piece->points = points;
+    current_piece->rotation = rotation;
+  } else { return; }
+
+
+  // Try wallkicks
+  std::vector<std::pair<int, int>> kicks;
+  if (type == PieceType::I) {
+    kicks = I_kicks_[rotation];
+  } else {
+    kicks = JLTSZ_kicks_[rotation];
+  }
+
+  for (const auto& kick : kicks) {
+    current_piece->RotateCW();
+    current_piece->Translate(kick.first, kick.second);
+
+    if (!ValidPosition(current_piece->points)) {
+      current_piece->points = points;
+      current_piece->rotation = rotation;
+    } else { return; }
   }
 }
 
@@ -243,26 +275,25 @@ void Game::CheckGameOver() {
 
 Game::Piece_ptr Game::GetRandomPiece() {
   auto n = rand() % 7;
-  n = 6;
 
   switch (n) {
     case 0:
-      return std::make_unique<IPiece>(&board);
+      return std::make_unique<IPiece>();
     case 1:
-      return std::make_unique<JPiece>(&board);
+      return std::make_unique<JPiece>();
     case 2:
-      return std::make_unique<LPiece>(&board);
+      return std::make_unique<LPiece>();
     case 3:
-      return std::make_unique<OPiece>(&board);
+      return std::make_unique<OPiece>();
     case 4:
-      return std::make_unique<SPiece>(&board);
+      return std::make_unique<SPiece>();
     case 5:
-      return std::make_unique<TPiece>(&board);
+      return std::make_unique<TPiece>();
     case 6:
-      return std::make_unique<ZPiece>(&board);
+      return std::make_unique<ZPiece>();
   }
 
-  return std::make_unique<LPiece>(&board);
+  return std::make_unique<LPiece>();
 }
 
 

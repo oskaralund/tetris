@@ -8,13 +8,16 @@
 namespace Tetris {
 
 
-Piece::Piece(Board* board) 
-  : board{board}
-{}
+void Piece::Translate(int rows, int cols) {
+  for (auto& p : points) {
+    p.first += rows;
+    p.second += cols;
+  }
+}
 
 
 // IPiece
-IPiece::IPiece(Board* board) : Piece{board} {
+IPiece::IPiece() {
   points = {{1, 3}, {1, 4}, {1, 5}, {1, 6}};
   prev_points = points;
   type = PieceType::I;
@@ -58,7 +61,7 @@ void IPiece::RotateCW() {
 
 
 // JPiece
-JPiece::JPiece(Board* board) : Piece{board} {
+JPiece::JPiece() {
   points = {{0, 4}, {1, 4}, {1, 5}, {1, 6}};
   prev_points = points;
   type = PieceType::J;
@@ -102,7 +105,7 @@ void JPiece::RotateCW() {
 
 
 // LPiece
-LPiece::LPiece(Board* board) : Piece{board} {
+LPiece::LPiece() {
   points = {{1, 4}, {1, 5}, {1, 6}, {0, 6}};
   prev_points = points;
   type = PieceType::L;
@@ -146,7 +149,7 @@ void LPiece::RotateCW() {
 
 
 // OPiece
-OPiece::OPiece(Board* board) : Piece{board} {
+OPiece::OPiece() {
   points = {{0, 4}, {0, 5}, {1, 4}, {1, 5}};
   prev_points = points;
   type = PieceType::O;
@@ -159,7 +162,7 @@ void OPiece::RotateCW() {
 
 
 // SPiece
-SPiece::SPiece(Board* board) : Piece{board} {
+SPiece::SPiece() {
   points = {{1, 4}, {1, 5}, {0, 5}, {0, 6}};
   prev_points = points;
   type = PieceType::S;
@@ -203,7 +206,7 @@ void SPiece::RotateCW() {
 
 
 // TPiece
-TPiece::TPiece(Board* board) : Piece{board} {
+TPiece::TPiece() {
   points = {{1, 4}, {1, 5}, {1, 6}, {0, 5}};
   prev_points = points;
   type = PieceType::T;
@@ -247,7 +250,7 @@ void TPiece::RotateCW() {
 
 
 // ZPiece
-ZPiece::ZPiece(Board* board) : Piece{board} {
+ZPiece::ZPiece() {
   points = {{0, 4}, {0, 5}, {1, 5}, {1, 6}};
   prev_points = points;
   type = PieceType::Z;

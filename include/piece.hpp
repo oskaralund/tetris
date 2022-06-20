@@ -12,13 +12,13 @@ class Board;
 
 
 struct Piece {
-  Piece(Board*);
   virtual void RotateCW() = 0;
   bool ValidPosition(Points) const;
   void Step();
   void UndoStep();
   void Left();
   void Right();
+  void Translate(int rows, int cols);
 
   int rotation = 0;
   Points points;
@@ -29,43 +29,43 @@ struct Piece {
 
 
 struct IPiece : public Piece {
-  IPiece(Board* board);
+  IPiece();
   void RotateCW() override;
 };
 
 
 struct LPiece : public Piece {
-  LPiece(Board* board);
+  LPiece();
   void RotateCW() override;
 };
 
 
 struct JPiece : public Piece {
-  JPiece(Board* board);
+  JPiece();
   void RotateCW() override;
 };
 
 
 struct OPiece : public Piece {
-  OPiece(Board* board);
+  OPiece();
   void RotateCW() override;
 };
 
 
 struct SPiece : public Piece {
-  SPiece(Board* board);
+  SPiece();
   void RotateCW() override;
 };
 
 
 struct TPiece : public Piece {
-  TPiece(Board* board);
+  TPiece();
   void RotateCW() override;
 };
 
 
 struct ZPiece : public Piece {
-  ZPiece(Board* board);
+  ZPiece();
   void RotateCW() override;
 };
 

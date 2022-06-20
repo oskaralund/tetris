@@ -32,6 +32,7 @@ public:
   Piece_ptr next_piece;
 
 private:
+  using WallKickTable = std::vector<std::vector<std::pair<int, int>>>;
 
   void LockPieceAndSpawnNew();
   void DropRows(int);
@@ -48,6 +49,9 @@ private:
   double time_ = 0.0;
   double pause_time_ = 1.0;
   bool game_over_ = false;
+
+  WallKickTable JLTSZ_kicks_;
+  WallKickTable I_kicks_;
 };
 
 
