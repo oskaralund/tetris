@@ -243,14 +243,15 @@ void Game::CheckGameOver() {
 
 Game::Piece_ptr Game::GetRandomPiece() {
   auto n = rand() % 7;
+  n = 6;
 
   switch (n) {
     case 0:
       return std::make_unique<IPiece>(&board);
     case 1:
-      return std::make_unique<LPiece>(&board);
-    case 2:
       return std::make_unique<JPiece>(&board);
+    case 2:
+      return std::make_unique<LPiece>(&board);
     case 3:
       return std::make_unique<OPiece>(&board);
     case 4:
