@@ -10,7 +10,8 @@ add_executable(main src/main.cpp
                     src/piece.cpp
                     src/game.cpp
                     src/render.cpp
-                    src/input.cpp)
+                    src/input.cpp
+                    src/SDL_FontCache.c)
 target_include_directories(main PUBLIC include)
-target_link_libraries(main PUBLIC -lSDL2 -lSDL_ttf)
+target_link_libraries(main PUBLIC -lSDL2 -lSDL2_ttf)
 target_compile_features(main PUBLIC cxx_std_20)

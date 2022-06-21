@@ -5,8 +5,8 @@
 #include <memory>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 
+#include "SDL_FontCache.h"
 #include "game.hpp"
 
 
@@ -37,6 +37,15 @@ class PlayingState : public RenderState {
 public:
   void Render(const Game&, SDL_Renderer*) override;
   std::unique_ptr<RenderState> Transition(const Game&) override;
+
+  SDL_Color bg_color() const;
+  SDL_Color filled_color() const;
+  SDL_Color grid_color() const;
+
+private:
+  SDL_Color bg_ = {200, 200, 200, 255};
+  SDL_Color filled_ = {140, 140, 140, 255};
+  SDL_Color grid_ = {150, 150, 150, 255};
 };
 
 
@@ -87,6 +96,7 @@ private:
   SDL_Window* window_;
   SDL_Renderer* renderer_;
   std::unique_ptr<RenderState> state_;
+  FC_Font* font_;
 };
 
 
