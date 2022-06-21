@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <chrono>
 
 #include "piece.hpp"
 
@@ -9,6 +10,9 @@ namespace Tetris {
 
 
 Game::Game() {
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  rng_.seed(seed);
+
   current_piece = GetRandomPiece();
   next_piece = GetRandomPiece();
   board.Clear();
@@ -318,7 +322,8 @@ void Game::CheckLevel() {
 
 
 Game::Piece_ptr Game::GetRandomPiece() {
-  auto n = rand() % 7;
+  std::uniform_int_distribution<int> dist{0,6};
+  auto n = dist(rng_);
 
   switch (n) {
     case 0:

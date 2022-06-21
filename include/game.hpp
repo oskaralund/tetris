@@ -2,6 +2,7 @@
 #define TETRIS_GAME_HPP_
 
 #include <memory>
+#include <random>
 
 #include "board.hpp"
 #include "tetris.hpp"
@@ -62,6 +63,7 @@ private:
   uint64_t score_ = 0;
   uint8_t level_progression_ = 0;
   std::vector<int> cleared_rows_;
+  std::default_random_engine rng_;
 
   WallKickTable JLTSZ_kicks_;
   WallKickTable I_kicks_;
