@@ -19,14 +19,15 @@ public:
   using Piece_ptr = std::unique_ptr<Piece>;
 
   Game();
-  ClearedRows Step(double dt);
+  void Step(double dt);
   void Left();
   void Right();
   void Down();
   void RotateCW();
-  bool GameOver();
+  bool GameOver() const;
   void Restart();
   void QuickDrop(bool);
+  std::vector<int> GetClearedRows() const;
 
   Points GetDestination() const;
 
@@ -53,6 +54,7 @@ private:
   double pause_time_ = 1.0;
   bool game_over_ = false;
   bool quickdrop_ = false;
+  std::vector<int> cleared_rows_;
 
   WallKickTable JLTSZ_kicks_;
   WallKickTable I_kicks_;

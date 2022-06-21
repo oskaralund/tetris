@@ -30,18 +30,23 @@ void Game::QuickDrop(bool q) {
 }
 
 
-ClearedRows Game::Step(double dt) {
+std::vector<int> Game::GetClearedRows() const {
+  return cleared_rows_;
+}
+
+
+void Game::Step(double dt) {
 
   if (quickdrop_) { dt *= 20.0; }
 
   time_ += dt;
 
-  if (time_ < pause_time_) { return {}; }
+  if (time_ < pause_time_) { return; }
 
   time_ = 0.0;
 
   CheckGameOver();
-  if (game_over_) { return {}; }
+  if (game_over_) { return; }
 
   MovePieceDown();
 
@@ -61,7 +66,7 @@ ClearedRows Game::Step(double dt) {
     LockPieceAndSpawnNew();
   }
 
-  return ClearFullRows();
+  cleared_rows_ = ClearFullRows();
 }
 
 
@@ -147,7 +152,7 @@ void Game::RotateCW() {
 }
 
 
-bool Game::GameOver() {
+bool Game::GameOver() const {
   return game_over_;
 }
 
