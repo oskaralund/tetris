@@ -1,5 +1,6 @@
 # Tetris
 A tetris clone written in C++ using SDL.
+
 ![](demo.gif)
 
 ## Building the project
