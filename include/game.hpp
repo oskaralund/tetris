@@ -25,11 +25,10 @@ public:
   void Right();
   void Down();
   void RotateCW();
-  bool GameOver() const;
   void Restart();
   void QuickDrop(bool);
+  bool GameOver() const;
   std::vector<int> GetClearedRows() const;
-
   Points GetDestination() const;
 
   uint64_t score() const;
