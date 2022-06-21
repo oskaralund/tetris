@@ -13,17 +13,28 @@
 namespace Tetris {
 
 
+struct RenderInfo {
+  const Game& game;
+  SDL_Renderer* renderer;
+  FC_Font* font;
+};
+
+
 class RenderState {
 public:
-  virtual void Render(const Game&, SDL_Renderer*) = 0;
-  virtual void Enter(const Game&, SDL_Renderer*) {}
-  virtual void Exit(const Game&, SDL_Renderer*) {}
-  virtual std::unique_ptr<RenderState> Transition(const Game&) = 0;
+  RenderState(RenderInfo);
+
+  virtual void Render() = 0;
+  virtual void Enter() {}
+  virtual void Exit() {}
+  virtual std::unique_ptr<RenderState> Transition() = 0;
 
   int dx() const;
   int dy() const;
   int grid_width() const;
   int grid_height() const;
+
+  RenderInfo info;
 
 private:
   const int dx_ = 25;
@@ -35,8 +46,10 @@ private:
 
 class PlayingState : public RenderState {
 public:
-  void Render(const Game&, SDL_Renderer*) override;
-  std::unique_ptr<RenderState> Transition(const Game&) override;
+  using RenderState::RenderState;
+
+  void Render() override;
+  std::unique_ptr<RenderState> Transition() override;
 
   SDL_Color bg_color() const;
   SDL_Color filled_color() const;
@@ -51,10 +64,10 @@ private:
 
 class RowClearState : public PlayingState {
 public:
-  RowClearState(std::vector<int> rows_cleared);
+  RowClearState(RenderInfo, std::vector<int> rows_cleared);
 
-  std::unique_ptr<RenderState> Transition(const Game&) override;
-  void Enter(const Game&, SDL_Renderer*) override;
+  std::unique_ptr<RenderState> Transition() override;
+  void Enter() override;
 
 private:
   Uint64 ticks_;
@@ -65,11 +78,11 @@ private:
 
 class GameOverState : public PlayingState {
 public:
-  GameOverState();
+  GameOverState(RenderInfo);
 
-  void Enter(const Game&, SDL_Renderer*) override;
-  void Render(const Game&, SDL_Renderer*) override;
-  std::unique_ptr<RenderState> Transition(const Game&) override;
+  void Enter() override;
+  void Render() override;
+  std::unique_ptr<RenderState> Transition() override;
 
 private:
   void FillRow(const Game&, SDL_Renderer*, int row);
