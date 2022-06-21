@@ -19,6 +19,17 @@ RenderState::RenderState(RenderInfo info) : info{info} {}
 
 
 // PlayingState
+PlayingState::PlayingState(RenderInfo info) : RenderState{info} {
+  piece_colors_[Tetris::PieceType::I] = {0, 200, 200, 255};
+  piece_colors_[Tetris::PieceType::J] = {0, 0, 200, 255};
+  piece_colors_[Tetris::PieceType::L] = {255, 165, 100, 255};
+  piece_colors_[Tetris::PieceType::O] = {255, 255, 100, 255};
+  piece_colors_[Tetris::PieceType::S] = {0, 200, 0, 255};
+  piece_colors_[Tetris::PieceType::T] = {231, 84, 128, 255};
+  piece_colors_[Tetris::PieceType::Z] = {200, 0, 0, 255};
+}
+
+
 void PlayingState::Render() {
 
   const Game& g = info.game;
@@ -49,26 +60,14 @@ void PlayingState::Render() {
     SDL_RenderDrawLine(r, x1, y1, x2, y2);
   }
 
-  SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
-
-  using ColorMap = std::map<Tetris::PieceType, std::vector<uint8_t>>;
-  ColorMap colors;
-  colors[Tetris::PieceType::I] = {0, 200, 200, 255};
-  colors[Tetris::PieceType::J] = {0, 0, 200, 255};
-  colors[Tetris::PieceType::L] = {255, 165, 100, 255};
-  colors[Tetris::PieceType::O] = {255, 255, 100, 255};
-  colors[Tetris::PieceType::S] = {0, 200, 0, 255};
-  colors[Tetris::PieceType::T] = {231, 84, 128, 255};
-  colors[Tetris::PieceType::Z] = {200, 0, 0, 255};
-
   // Render current piece
   const auto cur_type = g.current_piece->type;
   SDL_SetRenderDrawColor(
       r,
-      colors[cur_type][0],
-      colors[cur_type][1],
-      colors[cur_type][2],
-      colors[cur_type][3]);
+      piece_colors_[cur_type].r,
+      piece_colors_[cur_type].g,
+      piece_colors_[cur_type].b,
+      piece_colors_[cur_type].a);
 
   for (const auto& p : g.current_piece->points) {
     const auto row = p.first;
@@ -80,9 +79,9 @@ void PlayingState::Render() {
   // Render destination
   SDL_SetRenderDrawColor(
       r, 
-      colors[cur_type][0],
-      colors[cur_type][1],
-      colors[cur_type][2],
+      piece_colors_[cur_type].r,
+      piece_colors_[cur_type].g,
+      piece_colors_[cur_type].b,
       50);
   for (const auto& p : g.GetDestination()) {
     const auto row = p.first;
@@ -95,10 +94,10 @@ void PlayingState::Render() {
   const auto next_type = g.next_piece->type;
   SDL_SetRenderDrawColor(
       r, 
-      colors[next_type][0],
-      colors[next_type][1],
-      colors[next_type][2],
-      colors[next_type][3]);
+      piece_colors_[next_type].r,
+      piece_colors_[next_type].g,
+      piece_colors_[next_type].b,
+      piece_colors_[next_type].a);
 
   for (const auto& p : g.next_piece->points) {
     const auto row = p.first;
@@ -209,7 +208,10 @@ GameOverState::GameOverState(RenderInfo info)
     , ticks_{SDL_GetTicks64()} {}
 
 
-void GameOverState::FillRow(const Game& g, SDL_Renderer* r, int row) {
+void GameOverState::FillRow(int row) {
+  const Game& g = info.game;
+  SDL_Renderer* r = info.renderer;
+
   const auto fill = filled_color();
   SDL_SetRenderDrawColor(r, fill.r, fill.g, fill.b, fill.a);
   for (int col = 0; col < g.board.cols; ++col) {
@@ -228,7 +230,7 @@ void GameOverState::Enter() {
       static_cast<double>(animation_milliseconds_);
     const int row = (g.board.rows-1)*(1-elapsed);
 
-    FillRow(g, r, row);
+    FillRow(row);
 
     SDL_RenderPresent(r);
     SDL_Delay(1000/60);
@@ -242,8 +244,12 @@ void GameOverState::Render() {
 
   PlayingState::Render();
   for (int row = 0; row < g.board.rows; ++row) {
-    FillRow(g, r, row);
+    FillRow(row);
   }
+
+  // Render text
+  const std::string str = "Game Over!\n\nPress R to restart.";
+  FC_DrawAlign(info.font, r, 5*dx(), 10*dy(), FC_ALIGN_CENTER, str.c_str());
 }
 
 
@@ -300,7 +306,7 @@ Renderer::Renderer(const Game& g) : game_{g} {
   FC_LoadFont(
       font_,
       renderer_,
-      "arial.ttf",
+      "FreeSans.ttf",
       20, 
       FC_MakeColor(0, 0, 0, 255),
       TTF_STYLE_NORMAL);

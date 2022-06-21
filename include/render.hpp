@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <map>
 
 #include <SDL2/SDL.h>
 
@@ -46,7 +47,7 @@ private:
 
 class PlayingState : public RenderState {
 public:
-  using RenderState::RenderState;
+  PlayingState(RenderInfo);
 
   void Render() override;
   std::unique_ptr<RenderState> Transition() override;
@@ -59,6 +60,9 @@ private:
   SDL_Color bg_ = {200, 200, 200, 255};
   SDL_Color filled_ = {140, 140, 140, 255};
   SDL_Color grid_ = {150, 150, 150, 255};
+
+  using ColorMap = std::map<Tetris::PieceType, SDL_Color>;
+  ColorMap piece_colors_;
 };
 
 
@@ -85,7 +89,7 @@ public:
   std::unique_ptr<RenderState> Transition() override;
 
 private:
-  void FillRow(const Game&, SDL_Renderer*, int row);
+  void FillRow(int row);
   Uint64 ticks_;
   Uint64 animation_milliseconds_ = 1000;
 };
