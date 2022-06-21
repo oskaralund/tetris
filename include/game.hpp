@@ -5,7 +5,7 @@
 #include <random>
 
 #include "board.hpp"
-#include "tetris.hpp"
+#include "piece.hpp"
 
 
 namespace Tetris {

@@ -5,7 +5,6 @@
 
 #include "piece.hpp"
 #include "game.hpp"
-#include "tetris.hpp"
 #include "render.hpp"
 #include "input.hpp"
 

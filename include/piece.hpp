@@ -5,12 +5,17 @@
 #include <vector>
 #include <utility>
 
-#include "tetris.hpp"
-
 
 namespace Tetris {
 
-class Board;
+
+enum class PieceType {
+  I = 0, J, L, O, S, T, Z
+};
+
+
+using Point = std::pair<int, int>;
+using Points = std::vector<Point>;
 
 
 struct Piece {
@@ -25,7 +30,6 @@ struct Piece {
   int rotation = 0;
   Points points;
   Points prev_points;
-  Board* board;
   PieceType type;
 };
 
