@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TETRIS_GAME_HPP_
+#define TETRIS_GAME_HPP_
 
 #include <memory>
 
@@ -25,6 +26,8 @@ public:
   void RotateCW();
   bool GameOver();
   void Restart();
+  void QuickDrop(bool);
+
   Points GetDestination() const;
 
   Board board;
@@ -49,6 +52,7 @@ private:
   double time_ = 0.0;
   double pause_time_ = 1.0;
   bool game_over_ = false;
+  bool quickdrop_ = false;
 
   WallKickTable JLTSZ_kicks_;
   WallKickTable I_kicks_;
@@ -56,3 +60,6 @@ private:
 
 
 } // namespace Tetris
+
+
+#endif

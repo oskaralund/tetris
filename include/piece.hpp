@@ -1,4 +1,6 @@
-#pragma once
+#ifndef TETRIS_PIECE_HPP_
+#define TETRIS_PIECE_HPP_
+
 
 #include <vector>
 #include <utility>
@@ -71,3 +73,6 @@ struct ZPiece : public Piece {
 
 
 } // namespace Tetris
+
+
+#endif

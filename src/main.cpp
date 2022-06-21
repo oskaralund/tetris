@@ -180,7 +180,7 @@ void DrawGame(SDL_Renderer* renderer, const Tetris::Game& game) {
     const auto row = p.first;
     const auto col = p.second;
     SDL_Rect rect{
-      GRID_WIDTH + col*DX + 1, (row+4)*DY + 1, DX-2, DY-2};
+      GRID_WIDTH + col*DX + 1, (row+5)*DY + 1, DX-2, DY-2};
     SDL_RenderFillRect(renderer, &rect);
   }
 
@@ -242,10 +242,21 @@ void HandleEvent(
         g->Right();
         break;
       case SDLK_DOWN:
-        g->Down();
+        g->QuickDrop(true);
         break;
       case SDLK_UP:
         g->RotateCW();
+        break;
+      case SDLK_SPACE:
+        g->Down();
+        break;
+    }
+  }
+
+  if (e.type == SDL_KEYUP) {
+    switch (e.key.keysym.sym) {
+      case SDLK_DOWN:
+        g->QuickDrop(false);
         break;
     }
   }

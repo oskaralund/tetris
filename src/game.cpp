@@ -25,7 +25,14 @@ Game::Game() {
 }
 
 
+void Game::QuickDrop(bool q) {
+  quickdrop_ = q;
+}
+
+
 ClearedRows Game::Step(double dt) {
+
+  if (quickdrop_) { dt *= 20.0; }
 
   time_ += dt;
 

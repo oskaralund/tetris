@@ -1,4 +1,6 @@
-#pragma once
+#ifndef TETRIS_TETRIS_HPP_
+#define TETRIS_TETRIS_HPP_
+
 
 #include <vector>
 #include <utility>
@@ -17,3 +19,6 @@ using Points = std::vector<Point>;
 
 
 } // namespace Tetris
+
+
+#endif
