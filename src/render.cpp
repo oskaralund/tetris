@@ -1,6 +1,7 @@
 #include "render.hpp"
 
 #include <map>
+#include <string>
 
 #include "piece.hpp"
 
@@ -82,7 +83,7 @@ void PlayingState::Render() {
       colors[cur_type][0],
       colors[cur_type][1],
       colors[cur_type][2],
-      100);
+      50);
   for (const auto& p : g.GetDestination()) {
     const auto row = p.first;
     const auto col = p.second;
@@ -122,6 +123,18 @@ void PlayingState::Render() {
       SDL_RenderFillRect(r, &rect);
     }
   }
+
+  // Render score
+  const auto score_str = "Score: " + std::to_string(info.game.score());
+  const auto level_str = "Level: " + std::to_string(info.game.level());
+  const auto str = level_str + "\n" + score_str;
+  FC_DrawAlign(
+      info.font,
+      r,
+      grid_width() + 4*dx(),
+      10*dy(),
+      FC_ALIGN_CENTER,
+      str.c_str());
 }
 
 

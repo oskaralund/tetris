@@ -29,6 +29,8 @@ void Game::QuickDrop(bool q) {
   quickdrop_ = q;
 }
 
+uint64_t Game::score() const { return score_; }
+uint64_t Game::level() const { return level_; }
 
 std::vector<int> Game::GetClearedRows() const {
   return cleared_rows_;
@@ -48,6 +50,7 @@ void Game::Step(double dt) {
   CheckGameOver();
   if (game_over_) { return; }
 
+  CheckLevel();
   MovePieceDown();
 
   // Spawn new piece if we've hit the floor
@@ -160,6 +163,9 @@ bool Game::GameOver() const {
 void Game::Restart() {
   game_over_ = false;
   time_ = 0.0;
+  level_progression_ = 0;
+  level_ = 1;
+  score_ = 0;
   current_piece = GetRandomPiece();
   next_piece = GetRandomPiece();
 
@@ -248,6 +254,23 @@ ClearedRows Game::ClearFullRows() {
     }
   }
 
+  switch (cleared_rows.size()) {
+    case 1:
+      score_ += 100*level_;
+      break;
+    case 2:
+      score_ += 300*level_;
+      break;
+    case 3:
+      score_ += 500*level_;
+      break;
+    case 4:
+      score_ += 800*level_;
+      break;
+  }
+
+  level_progression_ += cleared_rows.size();
+
   return cleared_rows;
 }
 
@@ -281,6 +304,15 @@ void Game::CheckGameOver() {
   if (std::ranges::any_of(current_piece->points, InRowZero) &&
       std::ranges::any_of(current_piece->points, IntersectExistingPiece)) {
     game_over_ = true;
+  }
+}
+
+
+void Game::CheckLevel() {
+  if (level_progression_ >= 10) {
+    level_progression_ = 0;
+    pause_time_ *= 0.9;
+    level_ += 1;
   }
 }
 

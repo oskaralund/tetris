@@ -31,6 +31,9 @@ public:
 
   Points GetDestination() const;
 
+  uint64_t score() const;
+  uint64_t level() const;
+
   Board board;
   Piece_ptr current_piece;
   Piece_ptr next_piece;
@@ -46,6 +49,7 @@ private:
   void MovePieceUp();
   void MovePieceUp(Points*) const;
   void CheckGameOver();
+  void CheckLevel();
   bool RowIsFull(int) const;
   bool ValidPosition(Points) const;
   Piece_ptr GetRandomPiece();
@@ -54,6 +58,9 @@ private:
   double pause_time_ = 1.0;
   bool game_over_ = false;
   bool quickdrop_ = false;
+  uint64_t level_ = 1;
+  uint64_t score_ = 0;
+  uint8_t level_progression_ = 0;
   std::vector<int> cleared_rows_;
 
   WallKickTable JLTSZ_kicks_;
