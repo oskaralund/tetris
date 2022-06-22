@@ -1,8 +1,11 @@
 #ifndef TETRIS_INPUT_HPP_
 #define TETRIS_INPUT_HPP_
 
+#include <memory>
 
 #include <SDL2/SDL.h>
+
+#include "input_states.hpp"
 
 
 namespace Tetris {
@@ -18,10 +21,10 @@ public:
   bool HandleInput(); // Return true if quitting
 
 private:
-  void HandleEvent(const SDL_Event&);
   Game* game_;
   SDL_Window* window_;
   Renderer* renderer_;
+  std::unique_ptr<InputState> state_;
 };
 
 

@@ -2,6 +2,7 @@
 
 #include "game.hpp"
 #include "render.hpp"
+#include "input_states.hpp"
 
 
 namespace Tetris {
@@ -10,10 +11,17 @@ namespace Tetris {
 Controller::Controller(Game* game, Renderer* renderer)
     : game_{game}
     , window_{renderer->window()}
-    , renderer_{renderer} {}
+    , renderer_{renderer} {
+  state_ = std::make_unique<InputStatePlaying>(InputInfo{game_, renderer_});
+}
 
 
 bool Controller::HandleInput() {
+  auto new_state = state_->Transition();
+  if (new_state) {
+    state_ = std::move(new_state);
+  }
+
   SDL_Event e;
 
   auto pending = SDL_PollEvent(&e);
@@ -21,48 +29,12 @@ bool Controller::HandleInput() {
     if (e.type == SDL_QUIT) {
       return true;
     }
-    HandleEvent(e);
+    state_->HandleEvent(e);
     pending = SDL_PollEvent(&e);
   }
 
   return false;
 }
 
-
-void Controller::HandleEvent(const SDL_Event& e) {
-  if (e.type == SDL_KEYDOWN) {
-    switch (e.key.keysym.sym) {
-      case SDLK_LEFT:
-        game_->MovePieceLeft();
-        break;
-      case SDLK_RIGHT:
-        game_->MovePieceRight();
-        break;
-      case SDLK_DOWN:
-        game_->QuickDrop(true);
-        break;
-      case SDLK_UP:
-        game_->RotatePiece();
-        break;
-      case SDLK_SPACE:
-        game_->HardDrop();
-        break;
-      case SDLK_r:
-        game_->Restart();
-        break;
-      case SDLK_p:
-        game_->TogglePause();
-        break;
-    }
-  }
-
-  if (e.type == SDL_KEYUP) {
-    switch (e.key.keysym.sym) {
-      case SDLK_DOWN:
-        game_->QuickDrop(false);
-        break;
-    }
-  }
-}
 
 } // namespace Tetris

@@ -59,13 +59,13 @@ public:
 
   void FillRow(int row);
   void FillBoard();
-  void DrawGrid();
 
   SDL_Color bg_color() const;
   SDL_Color filled_color() const;
   SDL_Color grid_color() const;
 
 private:
+  void DrawGrid();
   void DrawCurrentPiece();
   void DrawDestination();
   void DrawNextPiece();
