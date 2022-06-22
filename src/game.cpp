@@ -43,6 +43,8 @@ std::vector<int> Game::GetClearedRows() const {
 
 void Game::Step(double dt) {
 
+  if (paused_) { return; }
+
   if (quickdrop_) { dt *= 20.0; }
 
   time_ += dt;
@@ -143,6 +145,11 @@ bool Game::gameover() const {
 }
 
 
+bool Game::paused() const {
+  return paused_;
+}
+
+
 void Game::Restart() {
   game_over_ = false;
   time_ = 0.0;
@@ -153,6 +160,11 @@ void Game::Restart() {
   next_piece = GetRandomPiece();
 
   board.Clear();
+}
+
+
+void Game::TogglePause() {
+  paused_ = !paused_;
 }
 
 

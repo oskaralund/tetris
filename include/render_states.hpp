@@ -45,6 +45,8 @@ private:
   const int dy_ = 25;
   const int grid_width_ = 10*dx_;
   const int grid_height_ = 24*dy_;
+  SDL_Color filled_color_ = {140, 140, 140, 255};
+  SDL_Color grid_lines_color_ = {150, 150, 150, 255};
 };
 
 
@@ -55,14 +57,23 @@ public:
   void Render() override;
   std::unique_ptr<RenderState> Transition() override;
 
+  void FillRow(int row);
+  void FillBoard();
+  void DrawGrid();
+
   SDL_Color bg_color() const;
   SDL_Color filled_color() const;
   SDL_Color grid_color() const;
 
 private:
-  SDL_Color bg_ = {200, 200, 200, 255};
-  SDL_Color filled_ = {140, 140, 140, 255};
-  SDL_Color grid_ = {150, 150, 150, 255};
+  void DrawCurrentPiece();
+  void DrawDestination();
+  void DrawNextPiece();
+  void DrawBoard();
+  void DrawScore();
+  SDL_Color bg_color_ = {200, 200, 200, 255};
+  SDL_Color filled_color_ = {140, 140, 140, 255};
+  SDL_Color grid_lines_color_ = {150, 150, 150, 255};
 
   using ColorMap = std::map<Tetris::PieceType, SDL_Color>;
   ColorMap piece_colors_;
@@ -92,9 +103,16 @@ public:
   std::unique_ptr<RenderState> Transition() override;
 
 private:
-  void FillRow(int row);
   Uint64 ticks_;
   Uint64 animation_milliseconds_ = 1000;
+};
+
+
+class PauseState : public PlayingState {
+public:
+  using PlayingState::PlayingState;
+  void Render() override;
+  std::unique_ptr<RenderState> Transition() override;
 };
 
 

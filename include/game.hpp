@@ -24,6 +24,7 @@ public:
   void QuickDrop(bool); // Increase drop speed
   void RotatePiece();
   void Restart();
+  void TogglePause();
 
   // Get indices of recently cleared rows
   ClearedRows GetClearedRows() const;
@@ -34,6 +35,7 @@ public:
   uint64_t score() const;
   uint64_t level() const;
   bool gameover() const; 
+  bool paused() const;
 
   Board board;
   Piece_ptr current_piece;
@@ -54,6 +56,7 @@ private:
   double time_ = 0.0;
   double pause_time_ = 1.0;
   bool game_over_ = false;
+  bool paused_ = false;
   bool quickdrop_ = false;
   uint64_t level_ = 1;
   uint64_t score_ = 0;

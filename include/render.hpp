@@ -31,7 +31,7 @@ private:
   const Game& game_;
   const int dx_ = 25;
   const int dy_ = 25;
-  const int width_ = 20*dx_;
+  const int width_ = 18*dx_;
   const int height_ = 24*dy_;
 
   SDL_Window* window_;

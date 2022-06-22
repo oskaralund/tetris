@@ -10,12 +10,13 @@ namespace Tetris {
 
 
 // RenderState
+RenderState::RenderState(RenderInfo info) : info{info} {}
+
+
 int RenderState::dx() const { return dx_; }
 int RenderState::dy() const { return dy_; }
 int RenderState::grid_width() const { return grid_width_; }
 int RenderState::grid_height() const { return grid_height_; }
-
-RenderState::RenderState(RenderInfo info) : info{info} {}
 
 
 // PlayingState
@@ -30,17 +31,31 @@ PlayingState::PlayingState(RenderInfo info) : RenderState{info} {
 }
 
 
-void PlayingState::Render() {
-
+void PlayingState::FillRow(int row) {
   const Game& g = info.game;
   SDL_Renderer* r = info.renderer;
 
-  // Set background
-  SDL_SetRenderDrawColor(r, bg_.r, bg_.g, bg_.b, bg_.a);
-  SDL_RenderClear(r);
+  const auto fill = filled_color_;
+  SDL_SetRenderDrawColor(r, fill.r, fill.g, fill.b, fill.a);
+  for (int col = 0; col < g.board.cols; ++col) {
+    SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
+    SDL_RenderFillRect(r, &rect);
+  }
+}
 
-  // Render grid
-  SDL_SetRenderDrawColor(r, grid_.r, grid_.g, grid_.b, grid_.a);
+
+void PlayingState::FillBoard() {
+  for (int row = 0; row < info.game.board.rows; ++row) {
+    FillRow(row);
+  }
+}
+
+
+void PlayingState::DrawGrid() {
+  const auto color = grid_lines_color_;
+  auto r = info.renderer;
+  const auto& g = info.game;
+  SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
 
   // Render vertical lines
   for (int i = 0; i <= g.board.cols; ++i) {
@@ -59,9 +74,14 @@ void PlayingState::Render() {
     auto y2 = y1;
     SDL_RenderDrawLine(r, x1, y1, x2, y2);
   }
+}
 
-  // Render current piece
+
+void PlayingState::DrawCurrentPiece() {
+  auto r = info.renderer;
+  const auto& g = info.game;
   const auto cur_type = g.current_piece->type;
+
   SDL_SetRenderDrawColor(
       r,
       piece_colors_[cur_type].r,
@@ -75,8 +95,13 @@ void PlayingState::Render() {
     SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
     SDL_RenderFillRect(r, &rect);
   }
+}
 
-  // Render destination
+
+void PlayingState::DrawDestination() {
+  auto r = info.renderer;
+  const auto& g = info.game;
+  const auto cur_type = g.current_piece->type;
   SDL_SetRenderDrawColor(
       r, 
       piece_colors_[cur_type].r,
@@ -89,8 +114,13 @@ void PlayingState::Render() {
     SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
     SDL_RenderFillRect(r, &rect);
   }
+}
 
-  // Render next piece
+
+void PlayingState::DrawNextPiece() {
+  auto r = info.renderer;
+  const auto& g = info.game;
+
   const auto next_type = g.next_piece->type;
   SDL_SetRenderDrawColor(
       r, 
@@ -103,17 +133,24 @@ void PlayingState::Render() {
     const auto row = p.row;
     const auto col = p.col;
     SDL_Rect rect{
-      grid_width() + col*dx() + 1, (row+5)*dy() + 1, dx()-2, dy()-2};
+      grid_width() + (col-1)*dx() + 1, (row+5)*dy() + 1, dx()-2, dy()-2};
     SDL_RenderFillRect(r, &rect);
   }
 
-  SDL_SetRenderDrawColor(r, grid_.r, grid_.g, grid_.b, grid_.a);
+  const auto c = grid_lines_color_;
+  SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
   SDL_Rect frame{
-    grid_width() + 2*dx(), 3*dy(), 6*dx(), 6*dy()};
+    grid_width() + dx(), 3*dy(), 6*dx(), 6*dy()};
   SDL_RenderDrawRect(r, &frame);
+}
 
-  // Render board
-  SDL_SetRenderDrawColor(r, filled_.r, filled_.g, filled_.b, filled_.a);
+
+void PlayingState::DrawBoard() {
+  auto r = info.renderer;
+  const auto& g = info.game;
+
+  const auto c = filled_color_;
+  SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
   for (int row = 0; row < g.board.rows; ++row) {
     for (int col = 0; col < g.board.cols; ++col) {
       if (g.board.matrix[row][col] == 0) { continue; }
@@ -122,10 +159,15 @@ void PlayingState::Render() {
       SDL_RenderFillRect(r, &rect);
     }
   }
+}
 
-  // Render score
-  const auto score_str = "Score: " + std::to_string(info.game.score());
-  const auto level_str = "Level: " + std::to_string(info.game.level());
+
+void PlayingState::DrawScore() {
+  auto r = info.renderer;
+  const auto& g = info.game;
+
+  const auto score_str = "Score: " + std::to_string(g.score());
+  const auto level_str = "Level: " + std::to_string(g.level());
   const auto str = level_str + "\n" + score_str;
   FC_DrawAlign(
       info.font,
@@ -134,6 +176,25 @@ void PlayingState::Render() {
       10*dy(),
       FC_ALIGN_CENTER,
       str.c_str());
+}
+
+
+void PlayingState::Render() {
+
+  const Game& g = info.game;
+  SDL_Renderer* r = info.renderer;
+
+  // Set background
+  const auto bg = bg_color_;
+  SDL_SetRenderDrawColor(r, bg.r, bg.g, bg.b, bg.a);
+  SDL_RenderClear(r);
+
+  DrawGrid();
+  DrawBoard();
+  DrawCurrentPiece();
+  DrawDestination();
+  DrawNextPiece();
+  DrawScore();
 }
 
 
@@ -149,13 +210,17 @@ std::unique_ptr<RenderState> PlayingState::Transition() {
     return std::make_unique<RowClearState>(info, cleared_rows);
   }
 
+  if (g.paused()) {
+    return std::make_unique<PauseState>(info);
+  }
+
   return nullptr;
 }
 
 
-SDL_Color PlayingState::bg_color() const { return bg_; }
-SDL_Color PlayingState::filled_color() const { return filled_; }
-SDL_Color PlayingState::grid_color() const { return grid_; }
+SDL_Color PlayingState::bg_color() const { return bg_color_; }
+SDL_Color PlayingState::filled_color() const { return filled_color_; }
+SDL_Color PlayingState::grid_color() const { return grid_lines_color_; }
 
 
 // RowClearState
@@ -208,19 +273,6 @@ GameOverState::GameOverState(RenderInfo info)
     , ticks_{SDL_GetTicks64()} {}
 
 
-void GameOverState::FillRow(int row) {
-  const Game& g = info.game;
-  SDL_Renderer* r = info.renderer;
-
-  const auto fill = filled_color();
-  SDL_SetRenderDrawColor(r, fill.r, fill.g, fill.b, fill.a);
-  for (int col = 0; col < g.board.cols; ++col) {
-    SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
-    SDL_RenderFillRect(r, &rect);
-  }
-}
-
-
 void GameOverState::Enter() {
   const Game& g = info.game;
   SDL_Renderer* r = info.renderer;
@@ -243,9 +295,7 @@ void GameOverState::Render() {
   SDL_Renderer* r = info.renderer;
 
   PlayingState::Render();
-  for (int row = 0; row < g.board.rows; ++row) {
-    FillRow(row);
-  }
+  FillBoard();
 
   // Render text
   const std::string str = "Game Over!\n\nPress R to restart.";
@@ -257,6 +307,34 @@ std::unique_ptr<RenderState> GameOverState::Transition() {
   const Game& g = info.game;
 
   if (!g.gameover()) {
+    return std::make_unique<PlayingState>(info);
+  }
+  else {
+    return nullptr;
+  }
+}
+
+
+// PauseState
+void PauseState::Render() {
+  PlayingState::Render();
+  FillBoard();
+
+  // Render text
+  FC_DrawAlign(
+      info.font,
+      info.renderer,
+      5*dx(),
+      10*dy(),
+      FC_ALIGN_CENTER,
+      "Paused");
+}
+
+
+std::unique_ptr<RenderState> PauseState::Transition() {
+  const Game& g = info.game;
+
+  if (!g.paused()) {
     return std::make_unique<PlayingState>(info);
   }
   else {

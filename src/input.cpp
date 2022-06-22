@@ -50,6 +50,9 @@ void Controller::HandleEvent(const SDL_Event& e) {
       case SDLK_r:
         game_->Restart();
         break;
+      case SDLK_p:
+        game_->TogglePause();
+        break;
     }
   }
 
