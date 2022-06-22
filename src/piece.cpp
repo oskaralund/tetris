@@ -10,8 +10,8 @@ namespace Tetris {
 
 void Piece::Translate(int rows, int cols) {
   for (auto& p : points) {
-    p.first += rows;
-    p.second += cols;
+    p.row += rows;
+    p.col += cols;
   }
 }
 
@@ -29,28 +29,28 @@ void IPiece::RotateCW() {
   const Point anchor = points[0];
   switch (rotation) {
     case 0:
-      new_points[0] = {anchor.first-1, anchor.second+2};
-      new_points[1] = {anchor.first  , anchor.second+2};
-      new_points[2] = {anchor.first+1, anchor.second+2};
-      new_points[3] = {anchor.first+2, anchor.second+2};
+      new_points[0] = {anchor.row-1, anchor.col+2};
+      new_points[1] = {anchor.row  , anchor.col+2};
+      new_points[2] = {anchor.row+1, anchor.col+2};
+      new_points[3] = {anchor.row+2, anchor.col+2};
       break;
     case 1:
-      new_points[0] = {anchor.first+2, anchor.second+1};
-      new_points[1] = {anchor.first+2, anchor.second  };
-      new_points[2] = {anchor.first+2, anchor.second-1};
-      new_points[3] = {anchor.first+2, anchor.second-2};
+      new_points[0] = {anchor.row+2, anchor.col+1};
+      new_points[1] = {anchor.row+2, anchor.col  };
+      new_points[2] = {anchor.row+2, anchor.col-1};
+      new_points[3] = {anchor.row+2, anchor.col-2};
       break;
     case 2:
-      new_points[0] = {anchor.first+1, anchor.second-2};
-      new_points[1] = {anchor.first  , anchor.second-2};
-      new_points[2] = {anchor.first-1, anchor.second-2};
-      new_points[3] = {anchor.first-2, anchor.second-2};
+      new_points[0] = {anchor.row+1, anchor.col-2};
+      new_points[1] = {anchor.row  , anchor.col-2};
+      new_points[2] = {anchor.row-1, anchor.col-2};
+      new_points[3] = {anchor.row-2, anchor.col-2};
       break;
     case 3:
-      new_points[0] = {anchor.first-2, anchor.second-1};
-      new_points[1] = {anchor.first-2, anchor.second  };
-      new_points[2] = {anchor.first-2, anchor.second+1};
-      new_points[3] = {anchor.first-2, anchor.second+2};
+      new_points[0] = {anchor.row-2, anchor.col-1};
+      new_points[1] = {anchor.row-2, anchor.col  };
+      new_points[2] = {anchor.row-2, anchor.col+1};
+      new_points[3] = {anchor.row-2, anchor.col+2};
       break;
   }
 
@@ -73,28 +73,28 @@ void JPiece::RotateCW() {
   const Point anchor = points[0];
   switch (rotation) {
     case 0:
-      new_points[0] = {anchor.first  , anchor.second+2};
-      new_points[1] = {anchor.first  , anchor.second+1};
-      new_points[2] = {anchor.first+1, anchor.second+1};
-      new_points[3] = {anchor.first+2, anchor.second+1};
+      new_points[0] = {anchor.row  , anchor.col+2};
+      new_points[1] = {anchor.row  , anchor.col+1};
+      new_points[2] = {anchor.row+1, anchor.col+1};
+      new_points[3] = {anchor.row+2, anchor.col+1};
       break;
     case 1:
-      new_points[0] = {anchor.first+2, anchor.second  };
-      new_points[1] = {anchor.first+1, anchor.second  };
-      new_points[2] = {anchor.first+1, anchor.second-1};
-      new_points[3] = {anchor.first+1, anchor.second-2};
+      new_points[0] = {anchor.row+2, anchor.col  };
+      new_points[1] = {anchor.row+1, anchor.col  };
+      new_points[2] = {anchor.row+1, anchor.col-1};
+      new_points[3] = {anchor.row+1, anchor.col-2};
       break;
     case 2:
-      new_points[0] = {anchor.first  , anchor.second-2};
-      new_points[1] = {anchor.first  , anchor.second-1};
-      new_points[2] = {anchor.first-1, anchor.second-1};
-      new_points[3] = {anchor.first-2, anchor.second-1};
+      new_points[0] = {anchor.row  , anchor.col-2};
+      new_points[1] = {anchor.row  , anchor.col-1};
+      new_points[2] = {anchor.row-1, anchor.col-1};
+      new_points[3] = {anchor.row-2, anchor.col-1};
       break;
     case 3:
-      new_points[0] = {anchor.first-2, anchor.second  };
-      new_points[1] = {anchor.first-1, anchor.second  };
-      new_points[2] = {anchor.first-1, anchor.second+1};
-      new_points[3] = {anchor.first-1, anchor.second+2};
+      new_points[0] = {anchor.row-2, anchor.col  };
+      new_points[1] = {anchor.row-1, anchor.col  };
+      new_points[2] = {anchor.row-1, anchor.col+1};
+      new_points[3] = {anchor.row-1, anchor.col+2};
       break;
   }
 
@@ -117,28 +117,28 @@ void LPiece::RotateCW() {
   const Point anchor = points[0];
   switch (rotation) {
     case 0:
-      new_points[0] = {anchor.first-1, anchor.second+1};
-      new_points[1] = {anchor.first  , anchor.second+1};
-      new_points[2] = {anchor.first+1, anchor.second+1};
-      new_points[3] = {anchor.first+1, anchor.second+2};
+      new_points[0] = {anchor.row-1, anchor.col+1};
+      new_points[1] = {anchor.row  , anchor.col+1};
+      new_points[2] = {anchor.row+1, anchor.col+1};
+      new_points[3] = {anchor.row+1, anchor.col+2};
       break;
     case 1:
-      new_points[0] = {anchor.first+1, anchor.second+1};
-      new_points[1] = {anchor.first+1, anchor.second  };
-      new_points[2] = {anchor.first+1, anchor.second-1};
-      new_points[3] = {anchor.first+2, anchor.second-1};
+      new_points[0] = {anchor.row+1, anchor.col+1};
+      new_points[1] = {anchor.row+1, anchor.col  };
+      new_points[2] = {anchor.row+1, anchor.col-1};
+      new_points[3] = {anchor.row+2, anchor.col-1};
       break;
     case 2:
-      new_points[0] = {anchor.first+1, anchor.second-1};
-      new_points[1] = {anchor.first  , anchor.second-1};
-      new_points[2] = {anchor.first-1, anchor.second-1};
-      new_points[3] = {anchor.first-1, anchor.second-2};
+      new_points[0] = {anchor.row+1, anchor.col-1};
+      new_points[1] = {anchor.row  , anchor.col-1};
+      new_points[2] = {anchor.row-1, anchor.col-1};
+      new_points[3] = {anchor.row-1, anchor.col-2};
       break;
     case 3:
-      new_points[0] = {anchor.first-1, anchor.second-1};
-      new_points[1] = {anchor.first-1, anchor.second  };
-      new_points[2] = {anchor.first-1, anchor.second+1};
-      new_points[3] = {anchor.first-2, anchor.second+1};
+      new_points[0] = {anchor.row-1, anchor.col-1};
+      new_points[1] = {anchor.row-1, anchor.col  };
+      new_points[2] = {anchor.row-1, anchor.col+1};
+      new_points[3] = {anchor.row-2, anchor.col+1};
       break;
   }
 
@@ -174,28 +174,28 @@ void SPiece::RotateCW() {
   const Point anchor = points[0];
   switch (rotation) {
     case 0:
-      new_points[0] = {anchor.first-1, anchor.second+1};
-      new_points[1] = {anchor.first  , anchor.second+1};
-      new_points[2] = {anchor.first  , anchor.second+2};
-      new_points[3] = {anchor.first+1, anchor.second+2};
+      new_points[0] = {anchor.row-1, anchor.col+1};
+      new_points[1] = {anchor.row  , anchor.col+1};
+      new_points[2] = {anchor.row  , anchor.col+2};
+      new_points[3] = {anchor.row+1, anchor.col+2};
       break;
     case 1:
-      new_points[0] = {anchor.first+2, anchor.second-1};
-      new_points[1] = {anchor.first+2, anchor.second  };
-      new_points[2] = {anchor.first+1, anchor.second  };
-      new_points[3] = {anchor.first+1, anchor.second+1};
+      new_points[0] = {anchor.row+2, anchor.col-1};
+      new_points[1] = {anchor.row+2, anchor.col  };
+      new_points[2] = {anchor.row+1, anchor.col  };
+      new_points[3] = {anchor.row+1, anchor.col+1};
       break;
     case 2:
-      new_points[0] = {anchor.first-2, anchor.second  };
-      new_points[1] = {anchor.first-1, anchor.second  };
-      new_points[2] = {anchor.first-1, anchor.second+1};
-      new_points[3] = {anchor.first  , anchor.second+1};
+      new_points[0] = {anchor.row-2, anchor.col  };
+      new_points[1] = {anchor.row-1, anchor.col  };
+      new_points[2] = {anchor.row-1, anchor.col+1};
+      new_points[3] = {anchor.row  , anchor.col+1};
       break;
     case 3:
-      new_points[0] = {anchor.first+1, anchor.second  };
-      new_points[1] = {anchor.first+1, anchor.second+1};
-      new_points[2] = {anchor.first  , anchor.second+1};
-      new_points[3] = {anchor.first  , anchor.second+2};
+      new_points[0] = {anchor.row+1, anchor.col  };
+      new_points[1] = {anchor.row+1, anchor.col+1};
+      new_points[2] = {anchor.row  , anchor.col+1};
+      new_points[3] = {anchor.row  , anchor.col+2};
       break;
   }
 
@@ -218,28 +218,28 @@ void TPiece::RotateCW() {
   const Point anchor = points[0];
   switch (rotation) {
     case 0:
-      new_points[0] = {anchor.first-1, anchor.second+1};
-      new_points[1] = {anchor.first  , anchor.second+1};
-      new_points[2] = {anchor.first+1, anchor.second+1};
-      new_points[3] = {anchor.first  , anchor.second+2};
+      new_points[0] = {anchor.row-1, anchor.col+1};
+      new_points[1] = {anchor.row  , anchor.col+1};
+      new_points[2] = {anchor.row+1, anchor.col+1};
+      new_points[3] = {anchor.row  , anchor.col+2};
       break;
     case 1:
-      new_points[0] = {anchor.first+1, anchor.second+1};
-      new_points[1] = {anchor.first+1, anchor.second  };
-      new_points[2] = {anchor.first+1, anchor.second-1};
-      new_points[3] = {anchor.first+2, anchor.second  };
+      new_points[0] = {anchor.row+1, anchor.col+1};
+      new_points[1] = {anchor.row+1, anchor.col  };
+      new_points[2] = {anchor.row+1, anchor.col-1};
+      new_points[3] = {anchor.row+2, anchor.col  };
       break;
     case 2:
-      new_points[0] = {anchor.first+1, anchor.second-1};
-      new_points[1] = {anchor.first  , anchor.second-1};
-      new_points[2] = {anchor.first-1, anchor.second-1};
-      new_points[3] = {anchor.first  , anchor.second-2};
+      new_points[0] = {anchor.row+1, anchor.col-1};
+      new_points[1] = {anchor.row  , anchor.col-1};
+      new_points[2] = {anchor.row-1, anchor.col-1};
+      new_points[3] = {anchor.row  , anchor.col-2};
       break;
     case 3:
-      new_points[0] = {anchor.first-1, anchor.second-1};
-      new_points[1] = {anchor.first-1, anchor.second  };
-      new_points[2] = {anchor.first-1, anchor.second+1};
-      new_points[3] = {anchor.first-2, anchor.second  };
+      new_points[0] = {anchor.row-1, anchor.col-1};
+      new_points[1] = {anchor.row-1, anchor.col  };
+      new_points[2] = {anchor.row-1, anchor.col+1};
+      new_points[3] = {anchor.row-2, anchor.col  };
       break;
   }
 
@@ -262,28 +262,28 @@ void ZPiece::RotateCW() {
   const Point anchor = points[0];
   switch (rotation) {
     case 0:
-      new_points[0] = {anchor.first  , anchor.second+2};
-      new_points[1] = {anchor.first+1, anchor.second+2};
-      new_points[2] = {anchor.first+1, anchor.second+1};
-      new_points[3] = {anchor.first+2, anchor.second+1};
+      new_points[0] = {anchor.row  , anchor.col+2};
+      new_points[1] = {anchor.row+1, anchor.col+2};
+      new_points[2] = {anchor.row+1, anchor.col+1};
+      new_points[3] = {anchor.row+2, anchor.col+1};
       break;
     case 1:
-      new_points[0] = {anchor.first+1, anchor.second-2};
-      new_points[1] = {anchor.first+1, anchor.second-1};
-      new_points[2] = {anchor.first+2, anchor.second-1};
-      new_points[3] = {anchor.first+2, anchor.second  };
+      new_points[0] = {anchor.row+1, anchor.col-2};
+      new_points[1] = {anchor.row+1, anchor.col-1};
+      new_points[2] = {anchor.row+2, anchor.col-1};
+      new_points[3] = {anchor.row+2, anchor.col  };
       break;
     case 2:
-      new_points[0] = {anchor.first-1, anchor.second+1};
-      new_points[1] = {anchor.first  , anchor.second+1};
-      new_points[2] = {anchor.first  , anchor.second  };
-      new_points[3] = {anchor.first+1, anchor.second  };
+      new_points[0] = {anchor.row-1, anchor.col+1};
+      new_points[1] = {anchor.row  , anchor.col+1};
+      new_points[2] = {anchor.row  , anchor.col  };
+      new_points[3] = {anchor.row+1, anchor.col  };
       break;
     case 3:
-      new_points[0] = {anchor.first  , anchor.second-1};
-      new_points[1] = {anchor.first  , anchor.second  };
-      new_points[2] = {anchor.first+1, anchor.second  };
-      new_points[3] = {anchor.first+1, anchor.second+1};
+      new_points[0] = {anchor.row  , anchor.col-1};
+      new_points[1] = {anchor.row  , anchor.col  };
+      new_points[2] = {anchor.row+1, anchor.col  };
+      new_points[3] = {anchor.row+1, anchor.col+1};
       break;
   }
 

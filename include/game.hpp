@@ -49,9 +49,7 @@ private:
   void DropRows(int);
   ClearedRows ClearFullRows();
   void MovePieceDown();
-  void MovePieceDown(Points*) const;
   void MovePieceUp();
-  void MovePieceUp(Points*) const;
   void CheckGameOver();
   void CheckLevel();
   bool RowIsFull(int) const;

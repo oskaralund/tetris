@@ -70,8 +70,8 @@ void PlayingState::Render() {
       piece_colors_[cur_type].a);
 
   for (const auto& p : g.current_piece->points) {
-    const auto row = p.first;
-    const auto col = p.second;
+    const auto row = p.row;
+    const auto col = p.col;
     SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
     SDL_RenderFillRect(r, &rect);
   }
@@ -84,8 +84,8 @@ void PlayingState::Render() {
       piece_colors_[cur_type].b,
       50);
   for (const auto& p : g.GetDestination()) {
-    const auto row = p.first;
-    const auto col = p.second;
+    const auto row = p.row;
+    const auto col = p.col;
     SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
     SDL_RenderFillRect(r, &rect);
   }
@@ -100,8 +100,8 @@ void PlayingState::Render() {
       piece_colors_[next_type].a);
 
   for (const auto& p : g.next_piece->points) {
-    const auto row = p.first;
-    const auto col = p.second;
+    const auto row = p.row;
+    const auto col = p.col;
     SDL_Rect rect{
       grid_width() + col*dx() + 1, (row+5)*dy() + 1, dx()-2, dy()-2};
     SDL_RenderFillRect(r, &rect);

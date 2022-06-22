@@ -5,6 +5,8 @@
 #include <vector>
 #include <utility>
 
+#include "points.hpp"
+
 
 namespace Tetris {
 
@@ -12,10 +14,6 @@ namespace Tetris {
 enum class PieceType {
   I = 0, J, L, O, S, T, Z
 };
-
-
-using Point = std::pair<int, int>;
-using Points = std::vector<Point>;
 
 
 struct Piece {
