@@ -20,19 +20,23 @@ public:
   using Piece_ptr = std::unique_ptr<Piece>;
 
   Game();
-  void Step(double dt);
-  void Left();
-  void Right();
-  void HardDrop();
-  void RotateCW();
+  void Step(double dt); // Call in game loop to move game forward
+  void MovePieceLeft();
+  void MovePieceRight();
+  void HardDrop(); // Immediately drop piece to floor
+  void QuickDrop(bool); // Increase drop speed
+  void RotatePiece();
   void Restart();
-  void QuickDrop(bool);
-  bool GameOver() const;
+
+  // Get indices of recently cleared rows
   std::vector<int> GetClearedRows() const;
+
+  // Get points corresponding to where the current piece will end up
   Points GetDestination() const;
 
   uint64_t score() const;
   uint64_t level() const;
+  bool gameover() const; 
 
   Board board;
   Piece_ptr current_piece;

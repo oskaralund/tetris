@@ -33,16 +33,16 @@ void Controller::HandleEvent(const SDL_Event& e) {
   if (e.type == SDL_KEYDOWN) {
     switch (e.key.keysym.sym) {
       case SDLK_LEFT:
-        game_->Left();
+        game_->MovePieceLeft();
         break;
       case SDLK_RIGHT:
-        game_->Right();
+        game_->MovePieceRight();
         break;
       case SDLK_DOWN:
         game_->QuickDrop(true);
         break;
       case SDLK_UP:
-        game_->RotateCW();
+        game_->RotatePiece();
         break;
       case SDLK_SPACE:
         game_->HardDrop();

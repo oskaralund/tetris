@@ -77,7 +77,7 @@ void Game::Step(double dt) {
 }
 
 
-void Game::Left() {
+void Game::MovePieceLeft() {
   Points new_points = current_piece->points;
   for (auto& p : new_points) {
     p.second -= 1;
@@ -89,7 +89,7 @@ void Game::Left() {
 }
 
 
-void Game::Right() {
+void Game::MovePieceRight() {
   Points new_points = current_piece->points;
   for (auto& p : new_points) {
     p.second += 1;
@@ -120,7 +120,7 @@ void Game::HardDrop() {
 }
 
 
-void Game::RotateCW() {
+void Game::RotatePiece() {
   auto points = current_piece->points;
   auto rotation = current_piece->rotation;
   auto type = current_piece->type;
@@ -155,7 +155,7 @@ void Game::RotateCW() {
 }
 
 
-bool Game::GameOver() const {
+bool Game::gameover() const {
   return game_over_;
 }
 

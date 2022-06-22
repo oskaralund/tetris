@@ -141,7 +141,7 @@ std::unique_ptr<RenderState> PlayingState::Transition() {
   const Game& g = info.game;
 
   auto cleared_rows = g.GetClearedRows();
-  if (g.GameOver()) {
+  if (g.gameover()) {
     return std::make_unique<GameOverState>(info);
   }
 
@@ -256,7 +256,7 @@ void GameOverState::Render() {
 std::unique_ptr<RenderState> GameOverState::Transition() {
   const Game& g = info.game;
 
-  if (!g.GameOver()) {
+  if (!g.gameover()) {
     return std::make_unique<PlayingState>(info);
   }
   else {
