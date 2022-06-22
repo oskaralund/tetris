@@ -9,7 +9,6 @@
 namespace Tetris {
 
 
-// Renderer
 Renderer::Renderer(const Game& g) : game_{g} {
 
   // Initialize SDL
