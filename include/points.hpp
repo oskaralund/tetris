@@ -10,9 +10,8 @@
 namespace Tetris {
 
 
-/* Represents a set of points on the playfield. Note that we can translate the
- * points conveniently, e.g.: points + {1,1}
- */
+// Represents a set of points on the playfield. Note that we can translate the
+// points conveniently, e.g.: points + {1,1}
 struct Points : std::vector<Point> {
   using std::vector<Point>::vector;
 

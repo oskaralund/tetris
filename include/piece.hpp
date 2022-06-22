@@ -12,17 +12,19 @@ namespace Tetris {
 
 
 enum class PieceType {
-  I = 0, J, L, O, S, T, Z
+  I, J, L, O, S, T, Z
 };
 
 
-struct Piece {
+// Base class for tetris pieces. We inherit from this and implement the
+// RotateCW() function to define a specific piece.
+struct Piece : Points {
+  using Points::Points;
+
   virtual void RotateCW() = 0;
-  void Translate(int rows, int cols);
+  void RotateCCW();
 
   int rotation = 0;
-  Points points;
-  Points prev_points;
   PieceType type;
 };
 

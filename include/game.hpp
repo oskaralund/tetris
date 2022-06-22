@@ -11,13 +11,10 @@
 namespace Tetris {
 
 
-class Piece;
-
-using ClearedRows = std::vector<int>;
-
 class Game {
 public:
   using Piece_ptr = std::unique_ptr<Piece>;
+  using ClearedRows = std::vector<int>;
 
   Game();
   void Step(double dt); // Call in game loop to move game forward
@@ -29,7 +26,7 @@ public:
   void Restart();
 
   // Get indices of recently cleared rows
-  std::vector<int> GetClearedRows() const;
+  ClearedRows GetClearedRows() const;
 
   // Get points corresponding to where the current piece will end up
   Points GetDestination() const;
@@ -48,12 +45,10 @@ private:
   void LockPieceAndSpawnNew();
   void DropRows(int);
   ClearedRows ClearFullRows();
-  void MovePieceDown();
-  void MovePieceUp();
   void CheckGameOver();
   void CheckLevel();
   bool RowIsFull(int) const;
-  bool ValidPosition(Points) const;
+  bool ValidPosition(const Points&) const;
   Piece_ptr GetRandomPiece();
 
   double time_ = 0.0;
@@ -65,7 +60,6 @@ private:
   uint8_t level_progression_ = 0;
   std::vector<int> cleared_rows_;
   std::default_random_engine rng_;
-
   WallKickTable JLTSZ_kicks_;
   WallKickTable I_kicks_;
 };

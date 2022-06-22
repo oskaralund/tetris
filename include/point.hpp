@@ -5,9 +5,8 @@
 namespace Tetris {
 
 
-/* Represents a point on the playfield. Note that we can translate the point
- * conveniently, e.g.: point + {1,1}
- */
+// Represents a point on the playfield. Note that we can translate the point
+// conveniently, e.g.: point + {1,1}
 struct Point {
   int row = 0;
   int col = 0;

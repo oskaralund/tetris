@@ -57,12 +57,12 @@ void Game::Step(double dt) {
   if (game_over_) { return; }
 
   CheckLevel();
-  MovePieceDown();
+  *current_piece += {1, 0};
 
   // Spawn new piece if we've hit the floor
   auto BelowFloor = [this] (Point p) { return p.row >= board.rows; };
-  if (std::ranges::any_of(current_piece->points, BelowFloor)) {
-    MovePieceUp();
+  if (std::ranges::any_of(*current_piece, BelowFloor)) {
+    *current_piece += {-1, 0};
     LockPieceAndSpawnNew();
   }
 
@@ -70,48 +70,35 @@ void Game::Step(double dt) {
   auto IntersectExistingPiece = [this] (Point p) {
     return board.matrix[p.row][p.col] != 0;
   };
-  if (std::ranges::any_of(current_piece->points, IntersectExistingPiece)) {
-    MovePieceUp();
+  if (std::ranges::any_of(*current_piece, IntersectExistingPiece)) {
+    *current_piece += {-1, 0};
     LockPieceAndSpawnNew();
   }
 }
 
 
 void Game::MovePieceLeft() {
-  Points new_points = current_piece->points;
-  for (auto& p : new_points) {
-    p.col -= 1;
-  }
-
-  if (ValidPosition(new_points)) {
-    current_piece->points = new_points;
+  *current_piece += {0, -1};
+  if (!ValidPosition(*current_piece)) {
+    *current_piece += {0, 1};
   }
 }
 
 
 void Game::MovePieceRight() {
-  Points new_points = current_piece->points;
-  for (auto& p : new_points) {
-    p.col += 1;
-  }
-
-  if (ValidPosition(new_points)) {
-    current_piece->points = new_points;
+  *current_piece += {0, 1};
+  if (!ValidPosition(*current_piece)) {
+    *current_piece += {0, -1};
   }
 }
 
 
 void Game::HardDrop() {
-  auto new_points = current_piece->points;
-  new_points += {1, 0};
-
   while (true) {
-    auto new_points = current_piece->points;
-    new_points += {1, 0};
-    if (ValidPosition(new_points)) {
-      current_piece->points = new_points;
-      continue;
-    } else {
+    *current_piece += {1, 0};
+
+    if (!ValidPosition(*current_piece)) {
+      *current_piece += {-1, 0};
       break;
     }
   }
@@ -121,21 +108,17 @@ void Game::HardDrop() {
 
 
 void Game::RotatePiece() {
-  auto points = current_piece->points;
-  auto rotation = current_piece->rotation;
-  auto type = current_piece->type;
-
-
   // Try basic rotation
   current_piece->RotateCW();
 
-  if (!ValidPosition(current_piece->points)) {
-    current_piece->points = points;
-    current_piece->rotation = rotation;
+  if (!ValidPosition(*current_piece)) {
+    current_piece->RotateCCW();
   } else { return; }
 
 
   // Try wallkicks
+  const auto type = current_piece->type;
+  const auto rotation = current_piece->rotation;
   std::vector<std::pair<int, int>> kicks;
   if (type == PieceType::I) {
     kicks = I_kicks_[rotation];
@@ -145,11 +128,11 @@ void Game::RotatePiece() {
 
   for (const auto& kick : kicks) {
     current_piece->RotateCW();
-    current_piece->Translate(kick.first, kick.second);
+    *current_piece += {kick.first, kick.second};
 
-    if (!ValidPosition(current_piece->points)) {
-      current_piece->points = points;
-      current_piece->rotation = rotation;
+    if (!ValidPosition(*current_piece)) {
+      *current_piece += {-kick.first, -kick.second};
+      current_piece->RotateCCW();
     } else { return; }
   }
 }
@@ -174,43 +157,26 @@ void Game::Restart() {
 
 
 Points Game::GetDestination() const {
-  auto destination = current_piece->points;
+  Points destination = *current_piece;
 
   while (ValidPosition(destination)) {
-    for (auto& p : destination) {
-      p.row += 1;
-    }
+    destination += {1, 0};
   }
 
-  for (auto& p : destination) {
-    p.row -= 1;
-  }
+  destination += {-1, 0};
 
   return destination;
 }
 
 
-void Game::MovePieceDown() {
-  for (auto& p : current_piece->points) {
-    p.row += 1;
-  }
-}
-
-
-void Game::MovePieceUp() {
-  for (auto& p : current_piece->points) {
-    p.row -= 1;
-  }
-}
-
 
 void Game::LockPieceAndSpawnNew() {
-  if (!ValidPosition(current_piece->points)) {
+  if (!ValidPosition(*current_piece)) {
     game_over_ = true;
     return;
   }
 
-  for (const auto& p : current_piece->points) {
+  for (const auto& p : *current_piece) {
     board.matrix[p.row][p.col] = 1;
   }
 
@@ -245,7 +211,7 @@ void Game::DropRows(int row) {
 }
 
 
-ClearedRows Game::ClearFullRows() {
+Game::ClearedRows Game::ClearFullRows() {
   ClearedRows cleared_rows;
   for (int i = 0; i < board.rows; ++i) {
     if (RowIsFull(i)) {
@@ -275,7 +241,7 @@ ClearedRows Game::ClearFullRows() {
 }
 
 
-bool Game::ValidPosition(Points points) const {
+bool Game::ValidPosition(const Points& points) const {
   for (const auto& p : points) {
     if (p.row < 0 ||
         p.row > board.rows-1 ||
@@ -301,8 +267,8 @@ void Game::CheckGameOver() {
     return board.matrix[p.row][p.col] != 0;
   };
 
-  if (std::ranges::any_of(current_piece->points, InRowZero) &&
-      std::ranges::any_of(current_piece->points, IntersectExistingPiece)) {
+  if (std::ranges::any_of(*current_piece, InRowZero) &&
+      std::ranges::any_of(*current_piece, IntersectExistingPiece)) {
     game_over_ = true;
   }
 }

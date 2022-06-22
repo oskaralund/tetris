@@ -69,7 +69,7 @@ void PlayingState::Render() {
       piece_colors_[cur_type].b,
       piece_colors_[cur_type].a);
 
-  for (const auto& p : g.current_piece->points) {
+  for (const auto& p : *g.current_piece) {
     const auto row = p.row;
     const auto col = p.col;
     SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
@@ -99,7 +99,7 @@ void PlayingState::Render() {
       piece_colors_[next_type].b,
       piece_colors_[next_type].a);
 
-  for (const auto& p : g.next_piece->points) {
+  for (const auto& p : *g.next_piece) {
     const auto row = p.row;
     const auto col = p.col;
     SDL_Rect rect{
