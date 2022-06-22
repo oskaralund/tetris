@@ -18,11 +18,6 @@ enum class PieceType {
 
 struct Piece {
   virtual void RotateCW() = 0;
-  bool ValidPosition(Points) const;
-  void Step();
-  void UndoStep();
-  void Left();
-  void Right();
   void Translate(int rows, int cols);
 
   int rotation = 0;
