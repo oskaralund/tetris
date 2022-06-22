@@ -23,7 +23,7 @@ public:
   void Step(double dt);
   void Left();
   void Right();
-  void Down();
+  void HardDrop();
   void RotateCW();
   void Restart();
   void QuickDrop(bool);

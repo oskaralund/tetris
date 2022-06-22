@@ -47,6 +47,8 @@ void Game::Step(double dt) {
 
   time_ += dt;
 
+  cleared_rows_ = ClearFullRows();
+
   if (time_ < pause_time_) { return; }
 
   time_ = 0.0;
@@ -72,8 +74,6 @@ void Game::Step(double dt) {
     MovePieceUp();
     LockPieceAndSpawnNew();
   }
-
-  cleared_rows_ = ClearFullRows();
 }
 
 
@@ -101,14 +101,9 @@ void Game::Right() {
 }
 
 
-void Game::Down() {
+void Game::HardDrop() {
   auto new_points = current_piece->points;
   MovePieceDown(&new_points);
-
-  if (!ValidPosition(new_points)) {
-    time_ = pause_time_;
-    return;
-  }
 
   while (true) {
     auto new_points = current_piece->points;
@@ -120,7 +115,8 @@ void Game::Down() {
       break;
     }
   }
-  time_ = 0.0;
+
+  time_ = pause_time_;
 }
 
 

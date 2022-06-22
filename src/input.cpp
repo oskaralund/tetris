@@ -45,7 +45,7 @@ void Controller::HandleEvent(const SDL_Event& e) {
         game_->RotateCW();
         break;
       case SDLK_SPACE:
-        game_->Down();
+        game_->HardDrop();
         break;
       case SDLK_r:
         game_->Restart();
