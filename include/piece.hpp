@@ -17,7 +17,9 @@ enum class PieceType {
 
 
 // Base class for tetris pieces. We inherit from this and implement the
-// RotateCW() function to define a specific piece.
+// RotateCW() function to define a specific piece. Note that this class
+// inherits from Points, so we can do simple translation, e.g.: piece + {1,0}
+// to move the piece one row down.
 struct Piece : Points {
   using Points::Points;
 

@@ -10,6 +10,7 @@ add_executable(main src/main.cpp
                     src/piece.cpp
                     src/game.cpp
                     src/render.cpp
+                    src/render_states.cpp
                     src/input.cpp
                     src/SDL_FontCache.c)
 target_include_directories(main PUBLIC include)
