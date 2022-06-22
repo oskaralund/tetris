@@ -103,11 +103,11 @@ void Game::MovePieceRight() {
 
 void Game::HardDrop() {
   auto new_points = current_piece->points;
-  new_points = new_points + Point{1, 0};
+  new_points += {1, 0};
 
   while (true) {
     auto new_points = current_piece->points;
-    new_points = new_points + Point{1, 0};
+    new_points += {1, 0};
     if (ValidPosition(new_points)) {
       current_piece->points = new_points;
       continue;

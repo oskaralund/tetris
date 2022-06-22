@@ -5,11 +5,21 @@
 namespace Tetris {
 
 
+/* Represents a point on the playfield. Note that we can translate the point
+ * conveniently, e.g.: point + {1,1}
+ */
 struct Point {
   int row = 0;
   int col = 0;
 
-  Point operator+(const Point& rhs) { return { row+rhs.row, col+rhs.col }; }
+  Point operator+(const int (&rhs)[2]) {
+    return { row+rhs[0], col+rhs[1] };
+  }
+
+  Point& operator+=(const int (&rhs)[2]) {
+    *this = *this + rhs;
+    return *this;
+  }
 };
 
 
