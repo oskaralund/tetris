@@ -10,3 +10,11 @@ cd tetris
 cmake .
 make
 ```
+
+## Usage
+Move with arrow keys.
+* `Up`: Rotate.
+* `Down`: Fast drop.
+* `space`: Hard drop.
+* `R`: Restart.
+* `P`: Pause.
