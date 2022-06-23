@@ -22,32 +22,40 @@ struct InputInfo {
 };
 
 
-// InputState base class. We subclass this to specify particular states and
+// Input state base class. We subclass this to specify particular states and
 // how they should handle input.
-class InputState {
+class InputStateBase {
 public:
-  InputState(InputInfo);
+  InputStateBase(InputInfo);
 
   virtual void HandleEvent(const SDL_Event&) = 0;
-  virtual std::unique_ptr<InputState> Transition() = 0;
+  virtual std::unique_ptr<InputStateBase> Transition() = 0;
 
   InputInfo info;
 };
 
 
-class InputStatePlaying : public InputState {
+class InputStatePlaying : public InputStateBase {
 public:
-  using InputState::InputState;
+  using InputStateBase::InputStateBase;
   void HandleEvent(const SDL_Event&) override;
-  std::unique_ptr<InputState> Transition() override;
+  std::unique_ptr<InputStateBase> Transition() override;
 };
 
 
-class InputStatePaused : public InputState {
+class InputStatePaused : public InputStateBase {
 public:
-  using InputState::InputState;
+  using InputStateBase::InputStateBase;
   void HandleEvent(const SDL_Event&) override;
-  std::unique_ptr<InputState> Transition() override;
+  std::unique_ptr<InputStateBase> Transition() override;
+};
+
+
+class InputStateRowClear : public InputStateBase {
+public:
+  using InputStateBase::InputStateBase;
+  void HandleEvent(const SDL_Event&) override;
+  std::unique_ptr<InputStateBase> Transition() override;
 };
 
 

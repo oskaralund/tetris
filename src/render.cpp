@@ -55,7 +55,8 @@ Renderer::Renderer(const Game& g) : game_{g} {
       TTF_STYLE_NORMAL);
 
   // Set playing state
-  state_ = std::make_unique<PlayingState>(RenderInfo{game_, renderer_, font_});
+  state_ = std::make_unique<RenderStatePlaying>(
+      RenderInfo{game_, renderer_, font_});
 }
 
 
@@ -84,6 +85,11 @@ void Renderer::Render() {
 
 SDL_Window* Renderer::window() const {
   return window_;
+}
+
+
+RenderStateName Renderer::state() const {
+  return state_->name();
 }
 
 

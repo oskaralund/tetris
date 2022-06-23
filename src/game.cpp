@@ -156,6 +156,8 @@ void Game::Restart() {
   level_progression_ = 0;
   level_ = 1;
   score_ = 0;
+  paused_ = false;
+  pause_time_ = 1.0;
   current_piece = GetRandomPiece();
   next_piece = GetRandomPiece();
 

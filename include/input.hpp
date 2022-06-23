@@ -24,7 +24,7 @@ private:
   Game* game_;
   SDL_Window* window_;
   Renderer* renderer_;
-  std::unique_ptr<InputState> state_;
+  std::unique_ptr<InputStateBase> state_;
 };
 
 

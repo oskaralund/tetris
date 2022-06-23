@@ -20,12 +20,12 @@ namespace Tetris {
 // rows are being cleared, if the game is over, etc). See render_states.hpp
 // for the different states and how they are rendered.
 class Renderer {
-
 public:
   Renderer(const Game&);
   ~Renderer();
   void Render();
   SDL_Window* window() const;
+  RenderStateName state() const;
 
 private:
   const Game& game_;
@@ -36,7 +36,7 @@ private:
 
   SDL_Window* window_;
   SDL_Renderer* renderer_;
-  std::unique_ptr<RenderState> state_;
+  std::unique_ptr<RenderStateBase> state_;
   FC_Font* font_;
 };
 

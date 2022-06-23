@@ -6,7 +6,7 @@
 namespace Tetris {
 
 
-InputState::InputState(InputInfo info) : info{info} {}
+InputStateBase::InputStateBase(InputInfo info) : info{info} {}
 
 
 // InputStatePlaying
@@ -47,12 +47,15 @@ void InputStatePlaying::HandleEvent(const SDL_Event& e) {
 }
 
 
-std::unique_ptr<InputState> InputStatePlaying::Transition() {
-  if (info.game->paused()) {
-    return std::make_unique<InputStatePaused>(info);
+std::unique_ptr<InputStateBase> InputStatePlaying::Transition() {
+  switch (info.renderer->state()) {
+    case RenderStateName::PAUSED:
+      return std::make_unique<InputStatePaused>(info);
+    case RenderStateName::ROWCLEAR:
+      return std::make_unique<InputStateRowClear>(info);
+    default:
+      return nullptr;
   }
-
-  return nullptr;
 }
 
 
@@ -71,12 +74,39 @@ void InputStatePaused::HandleEvent(const SDL_Event& e) {
 }
 
 
-std::unique_ptr<InputState> InputStatePaused::Transition() {
+std::unique_ptr<InputStateBase> InputStatePaused::Transition() {
   if (!info.game->paused()) {
     return std::make_unique<InputStatePlaying>(info);
   }
 
   return nullptr;
+}
+
+
+// InputStateRowClear
+void InputStateRowClear::HandleEvent(const SDL_Event& e) {
+  if (e.type == SDL_KEYDOWN) {
+    switch (e.key.keysym.sym) {
+      case SDLK_r:
+        info.game->Restart();
+        break;
+      case SDLK_p:
+        info.game->TogglePause();
+        break;
+    }
+  }
+}
+
+
+std::unique_ptr<InputStateBase> InputStateRowClear::Transition() {
+  switch (info.renderer->state()) {
+    case RenderStateName::PLAYING:
+      return std::make_unique<InputStatePlaying>(info);
+    case RenderStateName::PAUSED:
+      return std::make_unique<InputStatePaused>(info);
+    default:
+      return nullptr;
+  }
 }
 
 
