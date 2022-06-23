@@ -15,6 +15,9 @@ class Game;
 class Renderer;
 
 
+// This class handles input to a Game instance. It uses a finite state machine
+// to handle input differently depending on the state of the game and renderer.
+// See input_states.hpp.
 class Controller {
 public:
   Controller(Game*, Renderer*);

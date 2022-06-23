@@ -95,6 +95,14 @@ void InputStateRowClear::HandleEvent(const SDL_Event& e) {
         break;
     }
   }
+
+  if (e.type == SDL_KEYUP) {
+    switch (e.key.keysym.sym) {
+      case SDLK_DOWN:
+        info.game->QuickDrop(false);
+        break;
+    }
+  }
 }
 
 
