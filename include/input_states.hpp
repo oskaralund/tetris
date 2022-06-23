@@ -15,7 +15,7 @@ namespace Tetris {
 class Renderer;
 
 
-// This struct is passed to each InputState subclass upon construction.
+// This struct is passed to each InputStateBase subclass upon construction.
 struct InputInfo {
   Game* game;
   Renderer* renderer;
