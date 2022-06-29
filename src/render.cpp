@@ -74,7 +74,6 @@ void Renderer::Render() {
 
   if (new_state) {
     state_ = std::move(new_state);
-    state_->Enter();
   }
 
   state_->Render();
@@ -85,11 +84,6 @@ void Renderer::Render() {
 
 SDL_Window* Renderer::window() const {
   return window_;
-}
-
-
-RenderStateName Renderer::state() const {
-  return state_->name();
 }
 
 

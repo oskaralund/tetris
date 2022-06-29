@@ -13,7 +13,7 @@ int main() {
 
   Tetris::Game tetris;
   Tetris::Renderer renderer{tetris};
-  Tetris::Controller controller{&tetris, &renderer};
+  Tetris::Controller controller{&tetris};
 
   // Game loop
   auto time = SDL_GetTicks();

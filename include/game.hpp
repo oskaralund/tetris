@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <random>
+#include <functional>
 
 #include "board.hpp"
 #include "piece.hpp"
@@ -14,7 +15,11 @@ namespace Tetris {
 class Game {
 public:
   using Piece_ptr = std::unique_ptr<Piece>;
-  using ClearedRows = std::vector<int>;
+  using RowIndices = std::vector<int>;
+
+  enum class State {
+    PLAYING, PAUSED, ROWCLEAR, GAMEOVER
+  };
 
   Game();
   void Step(double dt); // Call in game loop to move game forward
@@ -25,17 +30,14 @@ public:
   void RotatePiece();
   void Restart();
   void TogglePause();
-
-  // Get indices of recently cleared rows
-  ClearedRows GetClearedRows() const;
+  RowIndices GetFullRows() const;
 
   // Get points corresponding to where the current piece will end up
   Points GetDestination() const;
 
   uint64_t score() const;
   uint64_t level() const;
-  bool gameover() const; 
-  bool paused() const;
+  State state() const;
 
   Board board;
   Piece_ptr current_piece;
@@ -43,28 +45,35 @@ public:
 
 private:
   using WallKickTable = std::vector<std::vector<std::pair<int, int>>>;
+  using StateStack = std::vector<std::function<void (Game*, double)>>;
 
   void LockPieceAndSpawnNew();
   void DropRows(int);
-  ClearedRows ClearFullRows();
+  void ClearFullRows();
   void CheckGameOver();
   void CheckLevel();
   bool RowIsFull(int) const;
   bool ValidPosition(const Points&) const;
   Piece_ptr GetRandomPiece();
 
+  // States
+  void PlayingStep(double dt);
+  void RowClearStep(double dt);
+  void PausedStep(double dt);
+  void GameOverStep(double dt);
+
   double time_ = 0.0;
   double pause_time_ = 1.0;
   bool game_over_ = false;
   bool paused_ = false;
-  bool quickdrop_ = false;
   uint64_t level_ = 1;
   uint64_t score_ = 0;
   uint8_t level_progression_ = 0;
-  std::vector<int> cleared_rows_;
   std::default_random_engine rng_;
   WallKickTable JLTSZ_kicks_;
   WallKickTable I_kicks_;
+  StateStack states_;
+  State state_;
 };
 
 

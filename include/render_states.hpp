@@ -22,11 +22,6 @@ struct RenderInfo {
 };
 
 
-enum class RenderStateName {
-  PLAYING, PAUSED, GAMEOVER, ROWCLEAR, NONE
-};
-
-
 // Render state base class. We subclass this to specify particular states and
 // how they should be rendered.
 class RenderStateBase {
@@ -34,16 +29,12 @@ public:
   RenderStateBase(RenderInfo);
 
   virtual void Render() = 0;
-  virtual void Enter() {}
-  virtual void Exit() {}
   virtual std::unique_ptr<RenderStateBase> Transition() = 0;
 
   int dx() const;
   int dy() const;
   int grid_width() const;
   int grid_height() const;
-  RenderStateName name() const;
-  void set_name(RenderStateName);
 
   RenderInfo info;
 
@@ -52,9 +43,6 @@ private:
   const int dy_ = 25;
   const int grid_width_ = 10*dx_;
   const int grid_height_ = 24*dy_;
-  SDL_Color filled_color_ = {140, 140, 140, 255};
-  SDL_Color grid_lines_color_ = {150, 150, 150, 255};
-  RenderStateName name_ = RenderStateName::NONE;
 };
 
 
@@ -90,14 +78,13 @@ private:
 
 class RenderStateRowClear : public RenderStatePlaying {
 public:
-  RenderStateRowClear(RenderInfo, std::vector<int> rows_cleared);
+  RenderStateRowClear(RenderInfo);
 
+  void Render() override;
   std::unique_ptr<RenderStateBase> Transition() override;
-  void Enter() override;
 
 private:
   Uint64 ticks_;
-  Uint64 animation_milliseconds_ = 1000;
   std::vector<int> rows_cleared_;
 };
 
@@ -106,11 +93,8 @@ class RenderStateGameOver : public RenderStatePlaying {
 public:
   RenderStateGameOver(RenderInfo);
 
-  void Enter() override;
   void Render() override;
   std::unique_ptr<RenderStateBase> Transition() override;
-
-  RenderStateName name = RenderStateName::GAMEOVER;
 
 private:
   Uint64 ticks_;

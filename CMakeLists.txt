@@ -12,7 +12,6 @@ add_executable(main src/main.cpp
                     src/render.cpp
                     src/render_states.cpp
                     src/input.cpp
-                    src/input_states.cpp
                     src/SDL_FontCache.c)
 target_include_directories(main PUBLIC include)
 target_link_libraries(main PUBLIC -lSDL2 -lSDL2_ttf)

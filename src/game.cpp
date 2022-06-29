@@ -26,55 +26,112 @@ Game::Game() {
               {{0, -1}, { 0,  2}, {-2, -1}, { 1,  2}},
               {{0,  2}, { 0, -1}, {-1,  2}, { 2, -1}},
               {{0,  1}, { 0, -2}, { 2,  1}, {-1, -2}}};
+
+  states_.push_back(&Game::PlayingStep);
+}
+
+
+void Game::Step(double dt) {
+  auto step = states_.back();
+  step(this, dt);
 }
 
 
 void Game::QuickDrop(bool q) {
-  quickdrop_ = q;
+  if (q) {
+    pause_time_ = 0.05;
+  }
+  else {
+    pause_time_ = std::pow(1.0, level_-1);
+  }
 }
 
 uint64_t Game::score() const { return score_; }
 uint64_t Game::level() const { return level_; }
 
-std::vector<int> Game::GetClearedRows() const {
-  return cleared_rows_;
+
+Game::RowIndices Game::GetFullRows() const {
+  RowIndices idxs;
+
+  for (int i = 0; i < board.rows; ++i) {
+    if (RowIsFull(i)) {
+      idxs.push_back(i);
+    }
+  }
+
+  return idxs;
 }
 
 
-void Game::Step(double dt) {
+void Game::PlayingStep(double dt) {
+  state_ = State::PLAYING;
 
-  if (paused_) { return; }
+  // If paused, transition to PausedStep
+  if (paused_) {
+    states_.push_back(&Game::PausedStep);
+  }
 
-  if (quickdrop_) { dt *= 20.0; }
+  // If game over, transition to GameOverStep
+  if (game_over_) {
+    states_.push_back(&Game::GameOverStep);
+  }
 
   time_ += dt;
-
-  cleared_rows_ = ClearFullRows();
-
   if (time_ < pause_time_) { return; }
 
-  time_ = 0.0;
-
-  CheckGameOver();
-  if (game_over_) { return; }
-
-  CheckLevel();
   *current_piece += {1, 0};
 
-  // Spawn new piece if we've hit the floor
-  auto BelowFloor = [this] (Point p) { return p.row >= board.rows; };
-  if (std::ranges::any_of(*current_piece, BelowFloor)) {
+  // Spawn new piece if we've hit something
+  auto HitSomething = [this] (Point p) {
+    return p.row >= board.rows || board.matrix[p.row][p.col] != 0; };
+  if (std::ranges::any_of(*current_piece, HitSomething)) {
     *current_piece += {-1, 0};
     LockPieceAndSpawnNew();
   }
 
-  // Spawn new piece if we've hit existing piece
-  auto IntersectExistingPiece = [this] (Point p) {
-    return board.matrix[p.row][p.col] != 0;
-  };
-  if (std::ranges::any_of(*current_piece, IntersectExistingPiece)) {
-    *current_piece += {-1, 0};
-    LockPieceAndSpawnNew();
+  CheckGameOver();
+
+  time_ = 0.0;
+
+  // If any row is full, transition to RowClearStep
+  if (GetFullRows().size() > 0) {
+    states_.push_back(&Game::RowClearStep);
+  }
+}
+
+
+void Game::RowClearStep(double dt) {
+  state_ = State::ROWCLEAR;
+
+  if (paused_) {
+    states_.push_back(&Game::PausedStep);
+  }
+
+  time_ += dt;
+
+  if (time_ < pause_time_) { return; }
+
+  ClearFullRows();
+  CheckLevel();
+  time_ = 0.0;
+  states_.pop_back();
+}
+
+
+void Game::PausedStep(double dt) {
+  state_ = State::PAUSED;
+
+  if (!paused_) {
+    states_.pop_back();
+  }
+}
+
+
+void Game::GameOverStep(double dt) {
+  state_ = State::GAMEOVER;
+
+  if (!game_over_) {
+    Restart();
   }
 }
 
@@ -140,13 +197,8 @@ void Game::RotatePiece() {
 }
 
 
-bool Game::gameover() const {
-  return game_over_;
-}
-
-
-bool Game::paused() const {
-  return paused_;
+Game::State Game::state() const {
+  return state_;
 }
 
 
@@ -162,6 +214,9 @@ void Game::Restart() {
   next_piece = GetRandomPiece();
 
   board.Clear();
+
+  states_.clear();
+  states_.push_back(&Game::PlayingStep);
 }
 
 
@@ -225,8 +280,8 @@ void Game::DropRows(int row) {
 }
 
 
-Game::ClearedRows Game::ClearFullRows() {
-  ClearedRows cleared_rows;
+void Game::ClearFullRows() {
+  RowIndices cleared_rows;
   for (int i = 0; i < board.rows; ++i) {
     if (RowIsFull(i)) {
       cleared_rows.push_back(i);
@@ -250,8 +305,6 @@ Game::ClearedRows Game::ClearFullRows() {
   }
 
   level_progression_ += cleared_rows.size();
-
-  return cleared_rows;
 }
 
 

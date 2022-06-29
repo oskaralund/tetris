@@ -16,7 +16,7 @@ namespace Tetris {
 
 
 // This class renders an instance of Game. It uses a finite state machine
-// which determines what is rendered depending on its state (e.g. if rows
+// which determines what is rendered depending on the game state (e.g. if rows
 // are being cleared, if the game is over, etc). See render_states.hpp for
 // the different states.
 class Renderer {
@@ -25,7 +25,6 @@ public:
   ~Renderer();
   void Render();
   SDL_Window* window() const;
-  RenderStateName state() const;
 
 private:
   const Game& game_;

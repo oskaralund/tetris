@@ -17,8 +17,6 @@ int RenderStateBase::dx() const { return dx_; }
 int RenderStateBase::dy() const { return dy_; }
 int RenderStateBase::grid_width() const { return grid_width_; }
 int RenderStateBase::grid_height() const { return grid_height_; }
-RenderStateName RenderStateBase::name() const { return name_; }
-void RenderStateBase::set_name(RenderStateName name) { name_ = name; }
 
 
 // RenderStatePlaying
@@ -31,7 +29,6 @@ RenderStatePlaying::RenderStatePlaying(RenderInfo info)
   piece_colors_[Tetris::PieceType::S] = {0, 200, 0, 255};
   piece_colors_[Tetris::PieceType::T] = {231, 84, 128, 255};
   piece_colors_[Tetris::PieceType::Z] = {200, 0, 0, 255};
-  set_name(RenderStateName::PLAYING);
 }
 
 
@@ -205,20 +202,16 @@ void RenderStatePlaying::Render() {
 std::unique_ptr<RenderStateBase> RenderStatePlaying::Transition() {
   const Game& g = info.game;
 
-  auto cleared_rows = g.GetClearedRows();
-  if (g.gameover()) {
-    return std::make_unique<RenderStateGameOver>(info);
+  switch (g.state()) {
+    case Game::State::GAMEOVER:
+      return std::make_unique<RenderStateGameOver>(info);
+    case Game::State::PAUSED:
+      return std::make_unique<RenderStatePaused>(info);
+    case Game::State::ROWCLEAR:
+      return std::make_unique<RenderStateRowClear>(info);
+    default:
+      return nullptr;
   }
-
-  if (cleared_rows.size() > 0) {
-    return std::make_unique<RenderStateRowClear>(info, cleared_rows);
-  }
-
-  if (g.paused()) {
-    return std::make_unique<RenderStatePaused>(info);
-  }
-
-  return nullptr;
 }
 
 
@@ -229,35 +222,29 @@ SDL_Color RenderStatePlaying::grid_color() const { return grid_lines_color_; }
 
 // RenderStateRowClear
 RenderStateRowClear::RenderStateRowClear(
-    RenderInfo info, std::vector<int> rows_cleared)
+    RenderInfo info)
     : RenderStatePlaying{info}
-    , rows_cleared_{rows_cleared}
     , ticks_{SDL_GetTicks64()} {
-  set_name(RenderStateName::ROWCLEAR);
+  rows_cleared_ = info.game.GetFullRows();
 }
 
 
-void RenderStateRowClear::Enter() {
+void RenderStateRowClear::Render() {
+  RenderStatePlaying::Render();
+
   const Game& g = info.game;
   SDL_Renderer* r = info.renderer;
-
   const auto bg = bg_color();
   const auto fill = filled_color();
+  ((SDL_GetTicks64() - ticks_) / 100) % 2 == 0 ?
+    SDL_SetRenderDrawColor(r, bg.r, bg.g, bg.b, bg.a) :
+    SDL_SetRenderDrawColor(r, fill.r, fill.g, fill.b, fill.a);
 
-  while (SDL_GetTicks64() < ticks_ + animation_milliseconds_) {
-    ((SDL_GetTicks64() - ticks_) / 100) % 2 == 0 ?
-      SDL_SetRenderDrawColor(r, bg.r, bg.g, bg.b, bg.a) :
-      SDL_SetRenderDrawColor(r, fill.r, fill.g, fill.b, fill.a);
-
-    for (const auto& row : rows_cleared_) {
-      for (int col = 0; col < g.board.cols; ++col) {
-        SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
-        SDL_RenderFillRect(r, &rect);
-      }
+  for (const auto& row : rows_cleared_) {
+    for (int col = 0; col < g.board.cols; ++col) {
+      SDL_Rect rect{col*dx()+1, row*dy()+1, dx()-2, dy()-2};
+      SDL_RenderFillRect(r, &rect);
     }
-
-    SDL_Delay(1000/60);
-    SDL_RenderPresent(r);
   }
 }
 
@@ -265,11 +252,13 @@ void RenderStateRowClear::Enter() {
 std::unique_ptr<RenderStateBase> RenderStateRowClear::Transition() {
   const Game& g = info.game;
 
-  if (SDL_GetTicks64() > ticks_ + animation_milliseconds_) {
-    return std::make_unique<RenderStatePlaying>(info);
-  }
-  else {
-    return nullptr;
+  switch (g.state()) {
+    case Game::State::PAUSED:
+      return std::make_unique<RenderStatePaused>(info);
+    case Game::State::PLAYING:
+      return std::make_unique<RenderStatePlaying>(info);
+    default:
+      return nullptr;
   }
 }
 
@@ -278,11 +267,10 @@ std::unique_ptr<RenderStateBase> RenderStateRowClear::Transition() {
 RenderStateGameOver::RenderStateGameOver(RenderInfo info)
     : RenderStatePlaying{info}
     , ticks_{SDL_GetTicks64()} {
-  set_name(RenderStateName::GAMEOVER);
 }
 
 
-void RenderStateGameOver::Enter() {
+void RenderStateGameOver::Render() {
   const Game& g = info.game;
   SDL_Renderer* r = info.renderer;
 
@@ -293,15 +281,8 @@ void RenderStateGameOver::Enter() {
 
     FillRow(row);
 
-    SDL_RenderPresent(r);
-    SDL_Delay(1000/60);
+    return;
   }
-}
-
-
-void RenderStateGameOver::Render() {
-  const Game& g = info.game;
-  SDL_Renderer* r = info.renderer;
 
   RenderStatePlaying::Render();
   FillBoard();
@@ -315,11 +296,11 @@ void RenderStateGameOver::Render() {
 std::unique_ptr<RenderStateBase> RenderStateGameOver::Transition() {
   const Game& g = info.game;
 
-  if (!g.gameover()) {
-    return std::make_unique<RenderStatePlaying>(info);
-  }
-  else {
-    return nullptr;
+  switch (g.state()) {
+    case Game::State::PLAYING:
+      return std::make_unique<RenderStatePlaying>(info);
+    default:
+      return nullptr;
   }
 }
 
@@ -327,7 +308,6 @@ std::unique_ptr<RenderStateBase> RenderStateGameOver::Transition() {
 // RenderStatePaused
 RenderStatePaused::RenderStatePaused(RenderInfo info)
     : RenderStatePlaying{info} {
-  set_name(RenderStateName::PAUSED);
 }
 
 
@@ -349,11 +329,13 @@ void RenderStatePaused::Render() {
 std::unique_ptr<RenderStateBase> RenderStatePaused::Transition() {
   const Game& g = info.game;
 
-  if (!g.paused()) {
-    return std::make_unique<RenderStatePlaying>(info);
-  }
-  else {
-    return nullptr;
+  switch (g.state()) {
+    case Game::State::PLAYING:
+      return std::make_unique<RenderStatePlaying>(info);
+    case Game::State::ROWCLEAR:
+      return std::make_unique<RenderStateRowClear>(info);
+    default:
+      return nullptr;
   }
 }
 
