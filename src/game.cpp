@@ -109,7 +109,7 @@ void Game::RowClearStep(double dt) {
 
   time_ += dt;
 
-  if (time_ < pause_time_) { return; }
+  if (time_ < row_clear_time_) { return; }
 
   ClearFullRows();
   CheckLevel();

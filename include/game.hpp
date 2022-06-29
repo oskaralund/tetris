@@ -64,6 +64,7 @@ private:
 
   double time_ = 0.0;
   double pause_time_ = 1.0;
+  double row_clear_time_ = 1.0;
   bool game_over_ = false;
   bool paused_ = false;
   uint64_t level_ = 1;
