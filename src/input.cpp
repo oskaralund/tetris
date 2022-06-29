@@ -61,7 +61,7 @@ void Controller::Playing(const SDL_Event& e) {
       case SDLK_r:
         game_->Restart();
         break;
-      case SDLK_p:
+      case SDLK_ESCAPE:
         game_->TogglePause();
         break;
     }
@@ -83,7 +83,7 @@ void Controller::Paused(const SDL_Event& e) {
       case SDLK_r:
         game_->Restart();
         break;
-      case SDLK_p:
+      case SDLK_ESCAPE:
         game_->TogglePause();
         break;
     }
@@ -97,7 +97,7 @@ void Controller::RowClear(const SDL_Event& e) {
       case SDLK_r:
         game_->Restart();
         break;
-      case SDLK_p:
+      case SDLK_ESCAPE:
         game_->TogglePause();
         break;
     }

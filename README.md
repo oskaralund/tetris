@@ -17,4 +17,4 @@ Move with arrow keys.
 * `Down`: Fast drop.
 * `space`: Hard drop.
 * `R`: Restart.
-* `P`: Pause.
+* `Esc`: Pause.
