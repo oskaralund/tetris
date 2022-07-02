@@ -48,7 +48,7 @@ private:
   using StateStack = std::vector<std::function<void (Game*, double)>>;
 
   void LockPieceAndSpawnNew();
-  void DropRows(int);
+  void ClearRow(int);
   void ClearFullRows();
   void CheckGameOver();
   void CheckLevel();

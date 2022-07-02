@@ -42,7 +42,7 @@ void Game::QuickDrop(bool q) {
     pause_time_ = 0.05;
   }
   else {
-    pause_time_ = std::pow(1.0, level_-1);
+    pause_time_ = std::pow(0.9, level_-1);
   }
 }
 
@@ -265,7 +265,7 @@ bool Game::RowIsFull(int row) const {
 }
 
 
-void Game::DropRows(int row) {
+void Game::ClearRow(int row) {
   if (row >= board.rows || row < 0) { return; }
 
   for (int i = row; i >= 0; --i) {
@@ -285,7 +285,7 @@ void Game::ClearFullRows() {
   for (int i = 0; i < board.rows; ++i) {
     if (RowIsFull(i)) {
       cleared_rows.push_back(i);
-      DropRows(i-1);
+      ClearRow(i-1);
     }
   }
 
